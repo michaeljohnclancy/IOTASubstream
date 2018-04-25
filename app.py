@@ -18,7 +18,8 @@ class User:
 		#Generates random seed
 		alphabet = u'9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 		generator = SystemRandom()
-		self.seed = u''.join(generator.choice(alphabet) for _ in range(81))
+		self.seed = u"EYPZDLOZBKTECDHCBVGAGOHDIVEDRLGKLWDXXXSBPUBFAJOSSWXUSDYJSRFRYBQK9TMALDCDQHTBGMJRH"
+		#u''.join(generator.choice(alphabet) for _ in range(81))
 
 		#Creates API instance
 		self.api = Iota(node, self.seed)
@@ -48,7 +49,7 @@ def sendIota():
 		_address = str(request.form['address'])
 		_numPayments = int(request.form['numPayments'])
 
-		newUser = User("http://node04.iotatoken.nl:14265", _userID)
+		newUser = User("http://node02.iotatoken.nl:14265", _userID)
 		
 		thread.start_new_thread(newUser.iota_send, (_address, _value, _time, _numPayments)) 
 

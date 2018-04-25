@@ -3,8 +3,8 @@ import csv
 import thread
 
 #Connects to node and opens API stream with seed
-node = "http://node04.iotatoken.nl:14265"
-seed = "AAJTNWZJFNGWYMWDPQ9QBSFDTDEXMAGVAYTN9VBWXTQSFZLKYSRMHSSEPSEBBSR9ULHXDEEIRPVSE9YNV"
+node = "http://node02.iotatoken.nl:14265"
+seed = "EYPZDLOZBKTECDHCBVGAGOHDIVEDRLGKLWDXXXSBPUBFAJOSSWXUSDYJSRFRYBQK9TMALDCDQHTBGMJRH"
 api = Iota(node, seed)
 
 #GLOBAL DICTIONARY Key is USER, Value is (balance, timestamp, activeStatus)
@@ -23,24 +23,20 @@ def interpret_message(m):  #Decrypts and executes instruction:
 		userID = TryteString.decode(tx.signature_message_fragment)
 		transactionValue = tx.value
 		timestamp = tx.timestamp
-		return {userID: [transactionValue, timestamp]}
+		return [userID,  transactionValue, timestamp]
 
-def setMembership():
-	for key in active_users.keys():
+def setMembership(messages):
+	for userID in messages.keys():
 		#Check if paid, assigns boolean value 1 being subscribed, 0 not subscribed
-		if active_users[key][0] >= 0:
-			active_users[key][2] = 1
+		if active_users[userID][0] >= 0:
+			active_users[userID][2] = 1
 		else:
-			active_users[key][2] = 0
+			active_users[userID][2] = 0
 
 
 def listen_loop():  #Continuously checks the IOTA network for new payments:
-	ms = get_bundles()
-	n = len(ms)
-	print("Found", n, "old message(s).")
-	print("------------------------")
-
-	print("Waiting for new messages:")
+	#ms = get_bundles()
+	n = 0#len(ms)
 	while(True):
 		ms = get_bundles()  #TODO This is a bottleneck
 		if len(ms)==n:
@@ -48,12 +44,13 @@ def listen_loop():  #Continuously checks the IOTA network for new payments:
 		else:
 			print("Received", len(ms)-n, "new message(s) [decrypted]:")
 
-			new_messages = dict([interpret_message(ms[i]).items() for i in range(n, len(ms))])
-			userIDs = [new_messages[i][0] for i in range(len(new_messages))]
+			new_messages = {}
+			for message in ms:
+				new_message = interpret_message(message)
+				userID = new_message[0]
+				new_messages[userID] = [new_message[1], new_message[2]]
 
-  
-
-			for userID in UserIDs:
+			for userID in new_messages.keys():
 				if userID in active_users.keys():
 					#Value of new transaction added to users balance
 					active_users[userID][0] += new_messages[userID][0]
@@ -61,8 +58,8 @@ def listen_loop():  #Continuously checks the IOTA network for new payments:
 					active_users[userID][2] = 0
 
 				else:
-					active_users[userID] = [new_messages[userID][0],  new_messages[userID][0], 0]
-			setMembership()
+					active_users[userID] = [new_messages[userID][0],  new_messages[userID][1], 0]
+			setMembership(new_messages)
 
 def print_active_users():
 	while(True):
