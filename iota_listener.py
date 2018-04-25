@@ -36,8 +36,8 @@ def setMembership(messages):
 
 
 def listen_loop():  #Continuously checks the IOTA network for new payments:
-	#ms = get_bundles()
-	n = 0#len(ms)
+	ms = get_bundles()
+	n = len(ms)
 	while(True):
 		ms = get_bundles()  #TODO This is a bottleneck
 		if len(ms)==n:
