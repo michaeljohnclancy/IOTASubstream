@@ -5,7 +5,8 @@ import thread
 #Connects to node and opens API stream with seed
 node = "http://node02.iotatoken.nl:14265"
 seed = "EYPZDLOZBKTECDHCBVGAGOHDIVEDRLGKLWDXXXSBPUBFAJOSSWXUSDYJSRFRYBQK9TMALDCDQHTBGMJRH"
-api = Iota(node, seed)
+api = Iota(node)
+#Random seed for time being
 
 #GLOBAL DICTIONARY Key is USER, Value is (balance, timestamp, activeStatus)
 active_users = {}

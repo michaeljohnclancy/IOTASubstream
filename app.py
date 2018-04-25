@@ -18,8 +18,7 @@ class User:
 		#Generates random seed
 		alphabet = u'9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 		generator = SystemRandom()
-		self.seed = u"EYPZDLOZBKTECDHCBVGAGOHDIVEDRLGKLWDXXXSBPUBFAJOSSWXUSDYJSRFRYBQK9TMALDCDQHTBGMJRH"
-		#u''.join(generator.choice(alphabet) for _ in range(81))
+		self.seed = u''.join(generator.choice(alphabet) for _ in range(81))
 
 		#Creates API instance
 		self.api = Iota(node, self.seed)
