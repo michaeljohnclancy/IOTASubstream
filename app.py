@@ -32,8 +32,8 @@ class User:
 			sleep(time)
 			i += 1
 
-	def newAddress(self, amount = 0):
-		 return self.api.get_new_addresses(amount)
+	def newAddress():
+		 return self.api.get_new_addresses()['addresses'][0]
 
 @app.route("/")
 def main():

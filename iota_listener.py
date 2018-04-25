@@ -29,13 +29,14 @@ def interpret_message(m):  #Decrypts and executes instruction:
 def setMembership(messages):
 	for userID in messages.keys():
 		#Check if paid, assigns boolean value 1 being subscribed, 0 not subscribed
-		if active_users[userID][0] >= 0:
+		if active_users[userID][0] > 0:
 			active_users[userID][2] = 1
 		else:
 			active_users[userID][2] = 0
 
 
 def listen_loop():  #Continuously checks the IOTA network for new payments:
+	print("Test Address: %s" % api.get_new_addresses()['addresses'][0])
 	ms = get_bundles()
 	n = len(ms)
 	while(True):
