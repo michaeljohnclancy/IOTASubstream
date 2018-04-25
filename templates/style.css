@@ -1,0 +1,60 @@
+@font-face {
+	/*NOT WORKING*/
+	font-family: 'Roboto';
+	src: url('Roboto-Regular.tff') format('truetype');
+}
+
+*{
+	font-family: sans-serif;
+	transition: 0.5s;
+}
+
+body{ 
+	background-color: #1A4575;
+	color: #CCD4FF;
+}
+
+h1{
+	margin-bottom: 50px;
+}
+
+input{
+	background-color: #63A1C1;
+	border: solid 0px;
+	color: #051A38;
+	padding: 10px;
+	border-radius: 10px;
+	box-shadow: inset 0px 0px 10px -5px;
+}
+
+/*input[type=text]{
+	width = 200px;
+}
+*/
+
+input[type="number"]{
+	width: 50px;
+}
+
+input[type="submit"], input[type="button"]{
+	box-shadow: 0px 0px 10px -5px;
+}
+
+input:hover{
+	border-color: #04CFD7;
+	background-color: #D7FEFF;
+	border-radius: 5px;
+	box-shadow: 0px 0px 20px -10px;
+}
+
+label{
+	display: inline-block;
+	width: 170px;
+	margin: 10px;
+	margin-bottom: 20px;
+	margin-top: 20px;
+}
+
+main{
+	margin: auto;
+}

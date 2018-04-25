@@ -1,13 +1,21 @@
+<!DOCTYPE html>
+
 <html>
-<head><title>IOTA Web </title></head>
+<head><title>Pay IOTA</title></head>
+<link rel="stylesheet" type="text/css" href="style.css">
 <body>
+<main>
+
+<h1>Pay IOTA</h1>
 <form method="POST" action="sendiota">
-	User id: <input name="userID"> <br>
-	Address: <input name="address"> <br>
-	Value: <input name="value" type="number"> iota <br>
-	Time: <input name="time" type="number" value=0> seconds <br>
-	Numer of payments: <input name="numPayments" type="number" value=0> transactions <br>
+	<label for="userID">User id:</label><input name="userID"> <br>
+	<label for="userID">Address:</label><input name="address"> <br>
+	<label for="userID">Value:</label><input name="value" type="number" value=0 min=0 max=10000> iota <br>
+	<label for="userID">Time:</label><input name="time" type="number" value=0 min=0> seconds <br>
+	<label for="userID">Numer of payments:</label><input name="numPayments" type="number" value=0 min=0> transactions <br>
 	<input name="submit" type="submit">
 </form>
+
+<main>
 </body>
 </html>
