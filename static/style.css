@@ -10,46 +10,87 @@
 	transition: 0.5s;
 }
 
+@keyframes grad{
+	0%{background-position: 0px -500px}
+	50%{background-position: 0px 0px}
+	100%{background-position: 0px 500px}
+
+}
+
 body{ 
-	background-color: #1A4575;
+	/*background-color: #1A4575;*/
+	background: repeating-linear-gradient(to bottom, #3158A1, #3F1D91, #3158A1);
 	color: #CCD4FF;
 	text-align: center;
+	padding-bottom: 350px;
+	animation-name: grad;
+	animation-duration: 10s;
+	animation-iteration-count: infinite;
 }
 
 h1{
+	text-align: center;
 	font-size: 60px;
+	margin: 20px;
 	margin-bottom: 50px;
 }
 
-input{
-	background-color: #14365C;
+input, select{
+	background-color: rgba(20, 54, 92, 0.7);
 	border: solid 0px;
 	color: #94ADE8;
 	padding: 15px;
 	border-radius: 5px;
-	box-shadow: inset 0px 0px 10px -5px #000000;
 }
 
-/*input[type=text]{
-	width = 200px;
+input:invalid, select:invalid{
+	box-shadow: inset 0px 0px 10px 0px rgba(255,0,130, 0.7);
 }
-*/
 
 input[type="number"]{
-	width: 60px;
+	width: 164px;
 }
 
 input[type="submit"], input[type="button"]{
-	box-shadow: 0px 0px 10px -5px #000000;
+	background-color: rgba(150,0,255, 0);
+	border: solid 4px rgba(150,0,255, 0.9);
+	box-shadow: 0px 0px 5px 0px rgba(150,0,255, 1);
+	padding: 20px;
+	border-radius: 60px;
+	font-size: 24px;
+	cursor: pointer;
+}
+
+input[type="submit"]:hover, input[type="button"]:hover{
+	color: #9DFFE9;
+	background-color: rgba(0,149,255, 0.9);
+	border: solid 4px rgba(0,149,255, 0.4);
+	box-shadow: 0px 0px 20px 5px rgba(0,149,255, 0.4);
+}
+
+/*
+input[type="submit"], input[type="button"]{
 	padding: 25px;
 	border-radius: 5px;
 	font-size: 24px;
+	cursor: pointer;
+}
+
+input[type="submit"]:hover, input[type="button"]:hover{
+	box-shadow: 0px 0px 10px -5px rgba(0,0,0,0.3);
+	background-color: rgba(35, 80, 130, 0.5);
+	color: #9DFFE9;
+}
+*/
+
+input[type="text"]{
+	margin-right: 225px;
 }
 
 input:hover{
 	/*color: #00FFC7;*/
 	color: #A4F5E5;
-	background-color: #193C63;
+	background-color: rgba(25, 60, 99, 0.7);
 	/*box-shadow: 0px 0px 20px -10px;*/
 }
 
@@ -61,12 +102,38 @@ input:focus{
 label{
 	display: inline-block;
 	text-align: right;
-	width: 170px;
+	width: 200px;
 	margin: 25px;
+	margin-left: 40px;
 	margin-bottom: 30px;
 }
 
-main{
-	margin: auto;
+label.units{
+	text-align: left;
+	/*width: 267px;*/
+	margin-left: 5px;
+	font-size: 12px;
+}
 
+form{
+	text-align: left;
+}
+
+main{
+	width: 800px;	
+	/*background-color: rgba(255,255,255, 0.1);*/
+	padding: 20px;
+	margin: 50px;
+
+}
+
+*.center{
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+hr{
+	height: 50px;
+	border: none;
 }

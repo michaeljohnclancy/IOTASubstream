@@ -4,18 +4,27 @@
 <head><title>Pay IOTA</title></head>
 <link rel="stylesheet" type="text/css" href="static/style.css">
 <body>
-<main>
 
+<main class="center">
 <h1>Pay IOTA</h1>
 <form method="POST" action="sendiota">
-	<label for="userID">User id:</label><input name="userID"> <br>
-	<label for="userID">Address:</label><input name="address"> <br>
-	<label for="userID">Value:</label><input name="value" type="number" value=0 min=0 max=10000> iota <br>
-	<label for="userID">Time:</label><input name="time" type="number" value=0 min=0> seconds <br>
-	<label for="userID">Numer of payments:</label><input name="numPayments" type="number" value=0 min=0> transactions <br>
-	<input name="submit" type="submit">
+	<label for="userID">User id:</label><input name="userID" type="text"> <br>
+	<label for="address">Address:</label><input name="address" type="text"> <br>
+	<label for="value">Value:</label><input name="value" type="number" value=0 min=0 max=10000>
+		<!--<label class="units" for="value">iota</label> <br> -->
+		<select>
+			<option value="i">i</option>
+			<option value="ki">ki</option>
+			<option value="Mi">Mi</option>
+		</select><br>
+	<label for="time">Time:</label><input name="time" type="number" value=0 min=0>
+		<label class="units" for="time">seconds</label> <br>
+	<label for="numPayments">Numer of payments:</label><input name="numPayments" type="number" value=0 min=0>
+		<label class="units" for="numPayments"></label> <br>
+	<hr>
+	<div class="center"><input name="submit" type="submit"></div>
 </form>
+</main>
 
-<main>
 </body>
 </html>
