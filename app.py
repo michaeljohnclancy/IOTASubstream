@@ -70,7 +70,7 @@ def sendIota():
 	if request.form['submit']:
 		_userID = str(request.form['userID'])
 		_value = int(request.form['value'])
-                _si = int(request.form['si'])
+                _si = request.form['si']
 
                 if _si=='ki':
                     _value *= 1e3
