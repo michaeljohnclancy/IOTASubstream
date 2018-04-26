@@ -19,7 +19,8 @@
 
 body{ 
 	/*background-color: #1A4575;*/
-	background: repeating-linear-gradient(to bottom, #3158A1, #3F1D91, #3158A1);
+	/*background: repeating-linear-gradient(to bottom, #3158A1, #3F1D91, #3158A1);*/
+	background: repeating-linear-gradient(to bottom, #5CA2C4, #424DCF, #5CA2C4);
 	color: #CCD4FF;
 	text-align: center;
 	padding-bottom: 350px;
@@ -52,11 +53,13 @@ input[type="number"]{
 }
 
 input[type="submit"], input[type="button"]{
-	background-color: rgba(150,0,255, 0);
-	border: solid 4px rgba(150,0,255, 0.9);
-	box-shadow: 0px 0px 5px 0px rgba(150,0,255, 1);
-	padding: 20px;
-	border-radius: 60px;
+	background-color: rgba(190,180,255, 0.3);
+	box-shadow: 0px 0px 10px 0px rgba(190,180,255, 0.3);
+	color: rgba(200,200,255, 1);
+	padding: 30px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	border-radius: 200px;
 	font-size: 24px;
 	cursor: pointer;
 }
@@ -64,8 +67,7 @@ input[type="submit"], input[type="button"]{
 input[type="submit"]:hover, input[type="button"]:hover{
 	color: #9DFFE9;
 	background-color: rgba(0,149,255, 0.9);
-	border: solid 4px rgba(0,149,255, 0.4);
-	box-shadow: 0px 0px 20px 5px rgba(0,149,255, 0.4);
+	box-shadow: 0px 0px 20px 10px rgba(0,149,255, 0.4);
 }
 
 /*
