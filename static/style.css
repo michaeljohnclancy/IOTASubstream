@@ -1,11 +1,11 @@
 @font-face {
 	/*NOT WORKING*/
 	font-family: 'Roboto';
-	src: url('Roboto-Regular.tff') format('truetype');
+	src: url('Roboto-Regular.ttf') format('truetype');
 }
 
 *{
-	font-family: sans-serif;
+	font-family: Roboto;
 	font-size: 18px;
 	transition: 0.5s;
 }
@@ -26,6 +26,7 @@ body{
 	animation-name: grad;
 	animation-duration: 30s;
 	animation-iteration-count: infinite;
+	margin: 0px;
 }
 
 video#bgvid{
@@ -33,7 +34,8 @@ video#bgvid{
 	position: fixed;	
 	min-width: 100%;
 	min-height: 100%;
-	transform: translate(-50%, -50%);
+	transform: translate(-50%, 0);
+	transition: 0s; 
 }
 
 h1{
@@ -45,7 +47,7 @@ h1{
 
 input, select{
 	background-color: rgba(20, 54, 92, 0.2);
-	border: solid 0px;
+	border: none;
 	color: #94ADE8;
 	padding: 15px;
 	border-radius: 5px;
@@ -99,7 +101,7 @@ input[type="submit"]:hover, input[type="button"]:hover{
 */
 
 input[type="text"]{
-	margin-right: 225px;
+	margin-right: 0px;
 }
 
 input:hover, select:hover{
@@ -117,7 +119,7 @@ input:focus{
 label{
 	display: inline-block;
 	text-align: right;
-	width: 200px;
+	width: 215px;
 	margin: 25px;
 	margin-left: 40px;
 	margin-bottom: 30px;
@@ -151,4 +153,35 @@ main{
 hr{
 	height: 50px;
 	border: none;
+}
+
+header{
+	background-color: rgba(190,180,255, 0.2);
+	color: #FFFFFF;
+	padding: 0px;
+	margin: 0px;
+	text-align: right;
+}
+
+header a{
+	display: inline-block;
+	text-decoration: none;
+	color: #FFFFFF;
+	margin: 10px;
+	margin-left: 0px;
+	padding: 20px;
+}
+
+header a:hover{
+	background-color: rgba(0,149,255, 0.9);
+	color: #9DFFE9;
+	box-shadow: 0px 0px 20px 10px rgba(0,149,255, 0.4);
+	border-radius: 5px;
+}
+
+header h1{
+	position: absolute;
+	position-left: 0px;
+	position-top: 0px;
+	font-size: 40px;
 }

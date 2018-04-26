@@ -1,16 +1,10 @@
-<!DOCTYPE html>
+{% extends "theme.html" %}
 
-<html>
-<head><title>Pay IOTA</title></head>
-<link rel="stylesheet" type="text/css" href="static/style.css">
-<body>
+{% block title %}Send Payments{% endblock %}
 
-<video playsinline autoplay muted loop poster="polina.jpg" id="bgvid">
-    <source src="static/bg.mp4" type="video/mp4">
-</video>
-
+{% block content %}
 <main class="center">
-<h1>Pay IOTA</h1>
+<h1>{{ self.title() }}</h1>
 <form method="POST" action="sendiota">
 	<label for="userID">User id:</label><input name="userID" type="text"> <br>
 	<label for="address">Address:</label><input name="address" type="text"> <br>
@@ -25,9 +19,7 @@
 	<label for="numPayments">Numer of payments:</label><input name="numPayments" type="number" value=0 min=0>
 		<label class="units" for="numPayments"></label> <br>
 	<hr>
-	<div class="center"><input name="submit" type="submit"></div>
+	<div class="center"><input name="submit" type="submit" value="Send Payments"></div>
 </form>
 </main>
-
-</body>
-</html>
+{% endblock %}
