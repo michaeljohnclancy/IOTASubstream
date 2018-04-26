@@ -70,6 +70,13 @@ def sendIota():
 	if request.form['submit']:
 		_userID = str(request.form['userID'])
 		_value = int(request.form['value'])
+                _si = int(request.form['si'])
+
+                if _si=='ki':
+                    _value *= 1e3
+                elif _si=='Mi':
+                    _value *= 1e6
+
 		_time = int(request.form['time'])
 		_address = str(request.form['address'])
 		_numPayments = int(request.form['numPayments'])
