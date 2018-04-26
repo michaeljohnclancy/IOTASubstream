@@ -1,0 +1,13 @@
+{% extends "theme.html" %}
+
+{% block title %}Signup Successful!{% endblock %}
+
+{% block content %}
+<main class="center">
+<h1>{{ self.title() }}</h1>
+<b> Success! </b>
+{% if current_user.is_authenticated %}
+  Hi {{ current_user.name }}!
+{% endif %}
+</main>
+{% endblock %}
