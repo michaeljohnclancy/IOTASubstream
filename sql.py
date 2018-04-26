@@ -5,7 +5,7 @@ class mysql_connect:
 	def __init__(self):
 		self.connection = pymysql.connect(host='localhost',
 							user='root',
-							password='Playbook8003',
+							password='',
 							db='transactions_db',
 							charset='utf8',
 							cursorclass=pymysql.cursors.DictCursor)
@@ -25,4 +25,4 @@ class mysql_connect:
 			result = cursor.fetchone()
 		return result
 
-	
+	def userCurrentBalance(self, userID):
