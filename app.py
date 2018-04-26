@@ -77,11 +77,7 @@ def sendIota():
 		newUser = User("http://node02.iotatoken.nl:14265", _userID)
 		
 		thread.start_new_thread(newUser.iota_send, (_address, _value, _time, _numPayments)) 
-		print(newUser.transactionHistory())
-
-def button_press_wait():
-	if input()
-
+		
 
 	return render_template('index.html')
 

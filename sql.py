@@ -5,7 +5,7 @@ class mysql_connect:
 	def __init__(self):
 		self.connection = pymysql.connect(host='localhost',
 							user='root',
-							password='',
+							password='Playbook8003',
 							db='transactions_db',
 							charset='utf8',
 							cursorclass=pymysql.cursors.DictCursor)
@@ -15,6 +15,7 @@ class mysql_connect:
 			# Create a new record
 			sql = "INSERT INTO `transactions` (`userID`, `value`, `origin_seed`, `destination_address`, `timestamp`) VALUES (%s, %s, %s, %s, %s)"
 			cursor.execute(sql, (userID, value, originSeed, destinationAddress, timestamp))
+		self.connection.commit()
 
 	def userTransactionHistory(self, userID):
 		with connection.cursor() as cursor:
@@ -23,3 +24,5 @@ class mysql_connect:
 			cursor.execute(sql, (userID))
 			result = cursor.fetchone()
 		return result
+
+	
