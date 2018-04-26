@@ -11,31 +11,34 @@ class User :
 
 	"""
 	User Attributes:
+		db_connection
 		node
 		userID
 		seed
 		api
+		is_authenticated
+		is_active
+		is_anonymous
 
 	User Methods:
+		set_node()
+		get_node()
 		iota_send()
 		new_address()
 		transactionHistory()
+		commitUserToDB()
+		password_encrypt()
+		password_verify()
+		get_password_hash()
+		set_is_authenticated()
+		set_is_active()
+		set_is_anonymous()
+		get_id()
 	"""
 
 	def __init__(self, userID):
 		#Starts database connection
 		self.db_connection = sql()
-
-
-		self.node = "http://node02.iotatoken.nl:14265"
-		self.userID = userID
-
-		#Generates random seed
-		alphabet = u'9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-		generator = SystemRandom()
-		self.seed = u''.join(generator.choice(alphabet) for _ in range(81))
-
-		self.db_connection.newUserAccount(self.userID, self.seed)
 
 		#Password Encryption
 		self.pwd_context = CryptContext(
@@ -44,7 +47,25 @@ class User :
         pbkdf2_sha256__default_rounds=30000
         )
 
-		#Creates API instance
+		self.node = "http://node02.iotatoken.nl:14265"
+		self.userID = userID
+
+		if self.user_exists():
+			self.seed = self.db_connection.selectProperty(self.userID, "seed")
+			self.is_authenticated = self.get_is_authenticated()
+			self.is_active = self.get_is_active() #Need to change to false and only make true when email is confirmed
+			self.is_anonymous = self.get_is_anonymous()
+		#Generates random seed
+		else:
+			alphabet = u'9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+			generator = SystemRandom()
+			self.seed = u''.join(generator.choice(alphabet) for _ in range(81))
+
+			self.is_authenticated = False
+			self.is_active = True #Need to change to false and only make true when email is confirmed
+			self.is_anonymous = True
+
+		self.db_connection.newUserAccount(self.userID, self.seed)
 		self.api = Iota(self.node, self.seed)
 
 		#Required for Flask Login
@@ -103,8 +124,21 @@ class User :
 		updateProperty(self.userID, 'is_anonymous', bool_val)
 		self.is_anonymous = bool_val
 
+	def get_is_authenticated():
+		return selectProperty(self.userID, "is_authenticated")
+
+	def get_is_active():
+		return selectProperty(self.userID, "is_active")
+
+	def get_is_anonymous():
+		return selectProperty(self.userID, "is_anonymous")
+
 	def get_id(self):
-		return unicode(selectProperty(self.userID, `id`))
+		return unicode(self.userID)
+
+	def user_exists(self):
+		return self.db_connection.userExists(self.userID)
+
 
 
 
@@ -113,7 +147,7 @@ class sql:
 	def __init__(self):
 		self.connection = pymysql.connect(host='localhost',
 							user='root',
-							password='Playbook8003',
+							password='',
 							db='transactions_db',
 							charset='utf8',
 							cursorclass=pymysql.cursors.DictCursor)
@@ -174,7 +208,15 @@ class sql:
 			sql = "SELECT %s FROM users WHERE `userID`=%s"
 			cursor.execute(sql, (prop, userID, ))
 			result = cursor.fetchone()
-		return result()
+		return str(result)
+
+	def userExists(self, userID):
+		with self.connection.cursor() as cursor:
+
+			sql = "SELECT EXISTS(SELECT 1. FROM users WHERE. userID=%s"
+			cursor.execute(sql, ([userID] ))
+			result = cursor.fetchone()
+		return bool(result)
 
 
 
