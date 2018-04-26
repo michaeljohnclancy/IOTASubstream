@@ -4,6 +4,7 @@ from random import SystemRandom
 import pymysql.cursors
 from iota import *
 import flask_login as fl
+import flask
 from time import *
 
 class User :
@@ -27,7 +28,7 @@ class User :
 
 
 		self.node = "http://node02.iotatoken.nl:14265"
-		self.userID = ""
+		self.userID = userID
 
 		#Generates random seed
 		alphabet = u'9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -91,19 +92,19 @@ class User :
 		return sql().getPasswordHash(self.userID)
 
 	def set_is_authenticated(self, bool_val):
-		updateProperty(self.userID, "is_authenticated", bool_val, "users")
+		updateProperty(self.userID, 'is_authenticated', bool_val)
 		self.is_authenticated = bool_val
 
 	def set_is_active(self, bool_val):
-		updateProperty(self.userID, "is_active", bool_val, "users")
+		self.db_connection.updateProperty(self.userID, 'is_active', bool_val)
 		self.is_active = bool_val
 	
 	def set_is_anonymous(self, bool_val):
-		updateProperties(self.userID, "is_anonymous", bool_val, "users")
+		updateProperty(self.userID, 'is_anonymous', bool_val)
 		self.is_anonymous = bool_val
 
 	def get_id(self):
-		return unicode(selectProperty(self.userID, "id", "users"))
+		return unicode(selectProperty(self.userID, `id`))
 
 
 
@@ -112,7 +113,7 @@ class sql:
 	def __init__(self):
 		self.connection = pymysql.connect(host='localhost',
 							user='root',
-							password='',
+							password='Playbook8003',
 							db='transactions_db',
 							charset='utf8',
 							cursorclass=pymysql.cursors.DictCursor)
@@ -138,6 +139,7 @@ class sql:
 			sql = "SELECT `timestamp` FROM `transactions` WHERE `userID`=%s"
 			cursor.execute(sql, (userID,))
 			result = cursor.fetchone()
+		self.connection.commit()
 		return result
 
 	def newUserAccount(self, userID, seed, password_hash="", email=""):
@@ -155,23 +157,22 @@ class sql:
 		with self.connection.cursor() as cursor:
 
 			sql = "SELECT `password_hash` FROM `users` WHERE `userID`=%s"
-			cursor.execute(sql (userID,))
+			cursor.execute(sql, ([userID]))
 			result = cursor.fetchone()
 		return result
 
-	def updateProperty(self, userID, prop, value, table):
+	def updateProperty(self, userID, prop, value):
+		with self.connection.cursor() as cursor:
+			sql = "UPDATE users set %s = %s WHERE userID = %s"
+			print(sql)
+			cursor.execute(sql, ( prop, value, userID,))
+			self.connection.commit()
+
+	def selectProperty(self, userID, prop):
 		with self.connection.cursor() as cursor:
 
-			cursor.execute("""UPDATE %s
-					SET %s=%s
-					WHERE userID = %s
-					""", (table, prop, value, userID,))
-
-	def selectProperty(self, userID, prop, table):
-		with self.connection.cursor() as cursor:
-
-			sql = "SELECT %s FROM %s WHERE `userID`=%s"
-			cursor.execute(sql, (prop, table, userID, ))
+			sql = "SELECT %s FROM users WHERE `userID`=%s"
+			cursor.execute(sql, (prop, userID, ))
 			result = cursor.fetchone()
 		return result()
 

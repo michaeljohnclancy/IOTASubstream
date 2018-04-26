@@ -11,7 +11,6 @@ from modules import User, sql
 app = Flask(__name__)
 LoginManager = fl.LoginManager(app)
 LoginManager.login_view = "login"
-LoginManager.login_message = "Please login"
 
 @LoginManager.user_loader
 def load_user(user_id):
@@ -79,8 +78,8 @@ def login():
 			#Flask login logs in user
 			login_user(user)
 			print("Hello, %s" % fl.current_user )
-			return flask.redirect(next or flask.url_for('index'))
-	return flask.render_template('login.html', form=form)
+			return flask.redirect(next or flask.url_for('index.html'))
+	return render_template('login.html')
 
 
 
