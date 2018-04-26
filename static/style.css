@@ -102,7 +102,7 @@ input[type="text"]{
 	margin-right: 225px;
 }
 
-input:hover{
+input:hover, select:hover{
 	/*color: #00FFC7;*/
 	color: #A4F5E5;
 	background-color: rgba(25, 60, 99, 0.7);
