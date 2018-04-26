@@ -1,12 +1,10 @@
-<!DOCTYPE html>
+{% extends "theme.html" %}
 
-<html>
-<head><title>Signup</title></head>
-<link rel="stylesheet" type="text/css" href="static/style.css">
-<body>
+{% block title %}Signup{% endblock %}
 
+{% block content %}
 <main class="center">
-<h1>Signup</h1>
+<h1>{{ self.title() }}</h1>
 <form method="POST" action="signup">
 	<label for="userID">User id:</label><input name="userID" type="text"> <br>
 	<label for="password">Password:</label><input name="password" type="password"> <br>
@@ -16,6 +14,4 @@
 	<div class="center"><input name="submit" type="submit" value="Signup"></div>
 </form>
 </main>
-
-</body>
-</html>
+{% endblock %}
