@@ -55,22 +55,26 @@ class User:
 			sleep(time)
 			i += 1
 
-	def newAddress():
+	def newAddress(self):
 		return self.api.get_new_addresses()['addresses'][0]
 
-	def transactionHistory():
+	def transactionHistory(self):
 		return self.db_connection.userTransactionHistory(self.userID)
+
+	def commitUserToDB(self, userID, password_hash, email):
+		self.db_connection.newUserAccount(userID, password_hash, email, self.seed)
+
 
 @app.route("/")
 def main():
 	return render_template('index.html')
 
-@app.route("/sendiota", methods=['POST'])
+@app.route("/sendiota", methods=['GET','POST'])
 def sendIota():
 	if request.form['submit']:
 		_userID = str(request.form['userID'])
 		_value = int(request.form['value'])
-                _si = request.form['si']
+		_si = request.form['si']
 
                 if _si=='ki':
                     _value *= 1e3
@@ -88,9 +92,17 @@ def sendIota():
 
 	return render_template('index.html')
 
-@app.route("/login",  methods=['GET','POST'])
-def userLogin():
-	
+@app.route("/signup",  methods=['GET','POST'])
+def userSignup():
+	if request.form['submit']:
+		_userID = str(request.form['userID'])
+		_password_hash = sql.password_encrypt(str(request.form['password']))
+		_password_confirm = sql.password_encrypt(str(request.form['confirm']))
+		_email = str(request.form['email'])
+
+	newUser = User("http://node02.iotatoken.nl:14265", _userID)
+	newUser.commitUserToDB()
+
 
 
 
