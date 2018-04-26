@@ -3,8 +3,10 @@ from passlib.context import CryptContext
 from random import SystemRandom
 import pymysql.cursors
 from iota import *
+import flask_login as fl
+from time import *
 
-class User:
+class User :
 
 	"""
 	User Attributes:
@@ -18,21 +20,21 @@ class User:
 		new_address()
 		transactionHistory()
 	"""
-	node = ""
-	userID = ""
 
-	def __init__(self, node, userID):
+	def __init__(self, userID):
 		#Starts database connection
 		self.db_connection = sql()
 
 
-		self.node = node
-		self.userID = userID
+		self.node = "http://node02.iotatoken.nl:14265"
+		self.userID = ""
 
 		#Generates random seed
 		alphabet = u'9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 		generator = SystemRandom()
 		self.seed = u''.join(generator.choice(alphabet) for _ in range(81))
+
+		self.db_connection.newUserAccount(self.userID, self.seed)
 
 		#Password Encryption
 		self.pwd_context = CryptContext(
@@ -42,7 +44,19 @@ class User:
         )
 
 		#Creates API instance
-		self.api = Iota(node, self.seed)
+		self.api = Iota(self.node, self.seed)
+
+		#Required for Flask Login
+		self.is_authenticated = False
+		self.is_active = True #Need to change to false and only make true when email is confirmed
+		self.is_anonymous = True
+
+
+	def setNode(self, node):
+		self.node=node
+
+	def getNode(self):
+		return self.node
 
 	def iota_send(self, target, value, time=0, numPayments=1):
 		i = 0
@@ -52,6 +66,7 @@ class User:
 			
 			#Logs transaction to DB
 			self.db_connection.addTransaction(self.userID, value, self.seed, target, tx.timestamp)
+			self.db_connection.newUserAccount(self.userID, self.seed)
 			
 			print("Sent")
 			sleep(time)
@@ -64,13 +79,32 @@ class User:
 		return self.db_connection.userTransactionHistory(self.userID)
 
 	def commitUserToDB(self, email, password_hash):
-		self.db_connection.newUserAccount(self.userID, password_hash, email, self.seed)
+		self.db_connection.newUserAccount(self.userID, self.seed, password_hash, email)
 
 	def password_encrypt(self, password):
 		return self.pwd_context.encrypt(password)
 
 	def password_verify(self, password, hashed):
 		return self.pwd_context.verify(password, hashed)
+
+	def get_password_hash(self):
+		return sql().getPasswordHash(self.userID)
+
+	def set_is_authenticated(self, bool_val):
+		updateProperty(self.userID, "is_authenticated", bool_val, "users")
+		self.is_authenticated = bool_val
+
+	def set_is_active(self, bool_val):
+		updateProperty(self.userID, "is_active", bool_val, "users")
+		self.is_active = bool_val
+	
+	def set_is_anonymous(self, bool_val):
+		updateProperties(self.userID, "is_anonymous", bool_val, "users")
+		self.is_anonymous = bool_val
+
+	def get_id(self):
+		return unicode(selectProperty(self.userID, "id", "users"))
+
 
 
 class sql:
@@ -95,7 +129,7 @@ class sql:
 		# Read a single record
 			sql = "SELECT `userID`, `value`, `origin_seed`, `destination_address`, `timestamp` FROM `transactions` WHERE `userID`=%s"
 			cursor.execute(sql, (userID))
-			result = cursor.fetchone()
+			result = cursor.fetchall()
 		return result
 
 	def userCurrentBalance(self, userID):
@@ -104,11 +138,49 @@ class sql:
 			sql = "SELECT `timestamp` FROM `transactions` WHERE `userID`=%s"
 			cursor.execute(sql, (userID,))
 			result = cursor.fetchone()
-			print(result)
 		return result
 
-	def newUserAccount(self, userID, password_hash, email, seed):
+	def newUserAccount(self, userID, seed, password_hash="", email=""):
+		if password_hash == "" or email == "":
+			is_anonymous = True
+		else:
+			is_anonymous = False
+
 		with self.connection.cursor() as cursor:
-			sql = "INSERT INTO `users` (`userID`, `password_hash`, `email`, `seed`, `balance`, `email_confirmed`, `timestamp` ) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-			cursor.execute(sql, (userID, password_hash, email, seed, 0, 0, 0))
+			sql = "INSERT INTO `users` (`userID`, `password_hash`, `email`, `seed`, `is_anonymous` ) VALUES (%s, %s, %s, %s, %s)"
+			cursor.execute(sql, (userID, password_hash, email, seed, is_anonymous))
 		self.connection.commit()
+
+	def getPasswordHash(self, userID):
+		with self.connection.cursor() as cursor:
+
+			sql = "SELECT `password_hash` FROM `users` WHERE `userID`=%s"
+			cursor.execute(sql (userID,))
+			result = cursor.fetchone()
+		return result
+
+	def updateProperty(self, userID, prop, value, table):
+		with self.connection.cursor() as cursor:
+
+			cursor.execute("""UPDATE %s
+					SET %s=%s
+					WHERE userID = %s
+					""", (table, prop, value, userID,))
+
+	def selectProperty(self, userID, prop, table):
+		with self.connection.cursor() as cursor:
+
+			sql = "SELECT %s FROM %s WHERE `userID`=%s"
+			cursor.execute(sql, (prop, table, userID, ))
+			result = cursor.fetchone()
+		return result()
+
+
+
+
+
+
+
+
+
+
