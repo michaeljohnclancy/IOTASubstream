@@ -2,68 +2,11 @@ from flask import Flask, render_template, request
 from iota import *
 from time import *
 import thread
-from random import SystemRandom
 import time
-import pymysql.cursors
-import sql
+
+from modules import User, sql
 
 app = Flask(__name__)
-
-class User:
-
-	"""
-	User Attributes:
-		node
-		userID
-		seed
-		api
-
-	User Methods:
-		iota_send()
-		new_address()
-		transactionHistory()
-	"""
-	node = ""
-	userID = ""
-
-	def __init__(self, node, userID):
-		#Starts database connection
-		self.db_connection = sql.mysql_connect()
-
-
-		self.node = node
-		self.userID = userID
-
-		#Generates random seed
-		alphabet = u'9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-		generator = SystemRandom()
-		self.seed = u''.join(generator.choice(alphabet) for _ in range(81))
-
-		#Creates API instance
-		self.api = Iota(node, self.seed)
-
-	def iota_send(self, target, value, time=0, numPayments=1):
-		i = 0
-		while (i <= numPayments-1):
-			tx = ProposedTransaction(address=Address(target), value=value, tag=None, message=TryteString.from_string(self.userID))
-			self.api.send_transfer(depth = 100, transfers=[tx])
-			
-			#Logs transaction to DB
-			self.db_connection.addTransaction(self.userID, value, self.seed, target, tx.timestamp)
-			
-			print("Sent")
-			sleep(time)
-			i += 1
-
-	def newAddress(self):
-		return self.api.get_new_addresses()['addresses'][0]
-
-	def transactionHistory(self):
-		return self.db_connection.userTransactionHistory(self.userID)
-
-	def commitUserToDB(self, userID, password_hash, email):
-		self.db_connection.newUserAccount(userID, password_hash, email, self.seed)
-
 
 @app.route("/")
 def main():
@@ -94,14 +37,17 @@ def sendIota():
 
 @app.route("/signup",  methods=['GET','POST'])
 def userSignup():
-	if request.form['submit']:
+	if request.method == 'POST':
 		_userID = str(request.form['userID'])
-		_password_hash = sql.password_encrypt(str(request.form['password']))
-		_password_confirm = sql.password_encrypt(str(request.form['confirm']))
-		_email = str(request.form['email'])
+		newUser = User("http://node02.iotatoken.nl:14265", _userID)
 
-	newUser = User("http://node02.iotatoken.nl:14265", _userID)
-	newUser.commitUserToDB()
+		if str(request.form['password']) == str(request.form['confirm']):
+			_password_hash = newUser.password_encrypt(str(request.form['password']))
+		
+			_email = str(request.form['email'])
+			newUser.commitUserToDB(_email, _password_hash)
+			print("Done")
+	return render_template('signup.html')
 
 
 
