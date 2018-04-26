@@ -44,6 +44,12 @@ input, select{
 	border-radius: 5px;
 }
 
+select{
+	-moz-appearance: none;
+	border-radius: 20px;
+	padding: 7px;
+}
+
 input:invalid, select:invalid{
 	box-shadow: inset 0px 0px 10px 0px rgba(255,0,130, 0.7);
 }
@@ -53,9 +59,9 @@ input[type="number"]{
 }
 
 input[type="submit"], input[type="button"]{
-	background-color: rgba(190,180,255, 0.3);
-	box-shadow: 0px 0px 10px 0px rgba(190,180,255, 0.3);
-	color: rgba(200,200,255, 1);
+	background-color: rgba(190,180,255, 0.7);
+	box-shadow: 0px 0px 10px 0px rgba(190,180,255, 0.7);
+	color: rgba(83,42,218, 1);
 	padding: 30px;
 	padding-top: 15px;
 	padding-bottom: 15px;
