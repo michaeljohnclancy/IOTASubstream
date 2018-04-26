@@ -1,11 +1,11 @@
 import pymysql.cursors
 
-class mysql_connect:
+def mysql_connect():
 
 	def __init__(self):
 		self.connection = pymysql.connect(host='localhost',
 							user='root',
-							password='',
+							password='Playbook8003',
 							db='transactions_db',
 							charset='utf8',
 							cursorclass=pymysql.cursors.DictCursor)
@@ -18,7 +18,7 @@ class mysql_connect:
 		self.connection.commit()
 
 	def userTransactionHistory(self, userID):
-		with connection.cursor() as cursor:
+		with self.connection.cursor() as cursor:
 		# Read a single record
 			sql = "SELECT `userID`, `value`, `origin_seed`, `destination_address`, `timestamp` FROM `transactions` WHERE `userID`=%s"
 			cursor.execute(sql, (userID))
@@ -26,3 +26,10 @@ class mysql_connect:
 		return result
 
 	def userCurrentBalance(self, userID):
+		with self.connection.cursor() as cursor:
+
+			sql = "SELECT `timestamp` FROM `transactions` WHERE `userID`=%s"
+			cursor.execute(sql, (userID,))
+			result = cursor.fetchone()
+			print(result)
+		return result

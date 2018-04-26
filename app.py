@@ -88,6 +88,10 @@ def sendIota():
 
 	return render_template('index.html')
 
+@app.route("/login",  methods=['GET','POST'])
+def userLogin():
+	
+
 
 
 if __name__ == "__main__":
