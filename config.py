@@ -11,7 +11,7 @@ class DevelopmentConfig(Config):
 	"""
 	Development configurations
 	"""
-
+	SQLALCHEMY_TRACK_MODIFICATIONS = False
 	DEBUG = True
 	SQLALCHEMY_ECHO = True
 

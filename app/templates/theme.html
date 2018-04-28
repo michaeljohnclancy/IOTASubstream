@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>{% block title %}{% endblock %}</title>
+	<link rel="stylesheet" type="text/css" href="static/style.css">
+</head>
+<body>
+
+<video playsinline autoplay muted loop id="bgvid">
+    <source src="static/bg.mp4" type="video/mp4">
+</video>
+
+<header>
+<nav>
+	<h1>Pay IOTA</h1>
+	<a href="/">Home</a>
+	<a href="login">Login</a>
+	<a href="signup">Signup</a>
+</nav>
+</header>
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>
