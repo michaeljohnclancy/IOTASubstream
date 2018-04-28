@@ -1,13 +1,17 @@
 {% extends "theme.html" %}
 
+{% import "bootstrap/wtf.html" as wtf %}
+
 {% block title %}Login{% endblock %}
 
 {% block content %}
 <main class="center">
 <h1>{{ self.title() }}</h1>
-<form method="POST" action="yourstats">
-	<label for="userID">User id:</label><input name="userID" type="text"> <br>
-	<label for="password">Password:</label><input name="password" type="password"> <br>
+<form method="POST" action="/login">
+	{{ form.hidden_tag() }}
+	{{ wtf.form_field(form.userID)}}
+	{{ wtf.form_field(form.password)}}
+	{{ wtf.form_field(form.remember)}}
 	<hr>
 	<div class="center"><input name="submit" type="submit" value="Login"></div>
 </form>

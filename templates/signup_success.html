@@ -7,7 +7,7 @@
 <h1>{{ self.title() }}</h1>
 <b> Success! </b>
 {% if current_user.is_authenticated %}
-  Hi {{ current_user.name }}!
+  Hi {{ current_user.userID }}!
 {% endif %}
 </main>
 {% endblock %}

@@ -1,17 +1,22 @@
-from flask import Flask, render_template, request, flash
 from iota import *
 from time import *
 import thread
 import time
-from flask_login import LoginManager
-from flask_security import login_required
+
+from flask import *
+from flask_bootstrap import Bootstrap
+import flask_login
+from flask_security import login_required 
 
 
 
-from modules import User, sql
+from modules import User, sql, LoginForm, SignupForm, SendIotaForm, Utils
+from input_checks import valid_password
 
 app = Flask(__name__)
-LoginManager = LoginManager(app)
+
+Bootstrap(app)
+LoginManager = flask_login.LoginManager(app)
 LoginManager.login_view = "login"
 
 @LoginManager.user_loader
@@ -22,97 +27,111 @@ def load_user(userID):
 	else:
 		return None
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def main():
-	return render_template('index.html')
+	form = SendIotaForm()
 
-@app.route("/sendiota", methods=['GET','POST'])
-def sendIota():
-	if request.form['submit']:
-		_userID = str(request.form['userID'])
-		_value = int(request.form['value'])
-		_si = request.form['si']
+	if form.validate_on_submit():
 
-		if _si=='ki':
+		if form.si.data=='ki':
 			_value *= 1e3
-		elif _si=='Mi':
+		elif form.si.data=='Mi':
 			_value *= 1e6
 
-		_time = int(request.form['time'])
-		_address = str(request.form['address'])
-		_numPayments = int(request.form['numPayments'])
-
-		newUser = User(_userID)
-		newUser.setNode("http://node02.iotatoken.nl:14265")
+		newUser = User(form.userID.data)
 		
-		thread.start_new_thread(newUser.iota_send, (_address, _value, _time, _numPayments)) 
+		thread.start_new_thread(newUser.iota_send, (form.address.data, form.value.data, form.time.data, form.num_payments.data)) 
+
+		flash("Success!")
 		
 
-	return render_template('index.html')
+	return render_template('index.html', form=form, next=next)
+
+
 
 @app.route("/signup",  methods=['GET','POST'])
 def userSignup():
-	if request.method == 'POST':
-		_userID = str(request.form['userID'])
-		newUser = User(_userID)
-		newUser.setNode("http://node02.iotatoken.nl:14265")
-		password = str(request.form['password'])
+	
+	form = SignupForm()
+	utils = Utils()
+	next = request.args.get('next')
+	
 
-		passwords_match = (password == str(request.form['confirm']))
+	if form.validate_on_submit():
+		user = User(form.userID.data)
 
-		if ((not newUser.exists()) and (passwords_match)):
-			_password_hash = newUser.password_encrypt(password)
-		
-			_email = str(request.form['email'])
-			newUser.commitUserToDB(_email, _password_hash)
-			newUser.set_is_active(True) #Should wait until email is confirmed in the future, set to 1 in database
-			newUser.set_is_anonymous(False)
+		passwords_match = (form.password.data == form.confirm.data)
 
-			next = flask.request.args.get('next')
+		if not user.exists():
+			if passwords_match:
+				_password_hash = user.password_encrypt(form.password.data)
+				user.set_email(form.email.data)
+				user.set_password_hash(_password_hash)
 
-			if not is_safe_url(next):
-				return flask.abort(400)
+				user.registerUser()
+				flask_login.login_user(user)
 
-			return flask.redirect(next or flask.url_for('/signup_success'))
+				if not utils.is_safe_url(next):
+					return abort(400)
 
-		elif not passwords_match:
-			flash("Passwords dont match!")
-			return flask.redirect(flask.url_for('/signup'))
-		elif newUser(exists) or newUser.db_connection.emailTaken(_email):
-			flash("User or Email taken")
-			return flask.redirect(flask.url_for('/signup'))
+				return redirect(next or url_for('success'))
+			else:
+				flash("Passwords don't match!")
+				print("Pass bad")
+		else:
+			flash("UserID taken!")
+			print("user bad")
 
-	return render_template('signup.html')
+	return render_template('signup.html', form=form, next=next)
 
 @app.route('/login', methods=['GET', 'POST'])
+
 def login():
-	if request.method == 'POST':
-		_userID = str(request.form['userID'])
-		_password = str(request.form['password'])
-		user = User(_userID)
-		if (user.exists and user.password_verify(_password, user.get_password_hash())):
-			user.setNode("http://node02.iotatoken.nl:14265")
-			user.set_is_authenticated(True)
-			
+
+	form = LoginForm()
+	utils = Utils()
+	next = request.args.get('next')
+	
+	if form.validate_on_submit():
+		user = User(form.userID.data)
+
+		if user.exists():
+			if user.password_verify(form.password.data, user.get_password_hash()):
 			#Flask login logs in user
-			login_user(user)
+				flask_login.login_user(user)
+				print(flask_login.current_user.userID)
 
-			next = flask.request.args.get('next')
+				if not utils.is_safe_url(next):
+					return abort(400)
+				print("Redirecting...")
+				return redirect(next or url_for('viewStats'))
 
-			if not is_safe_url(next):
-				return flask.abort(400)
+		else:
+			print("Username or password incorrect! Try again.")
+			flash("Username or password incorrect! Try again.")
+		
 
-			return flask.redirect(next or flask.url_for('/yourstats'))
+	return render_template('login.html', form=form, next=next)
 
-	return render_template('login.html')
 
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+
+	next = request.args.get('next')
+	
+	flask_login.logout_user()
+		
+	return redirect(next or url_for('main'))
 
 @app.route('/yourstats', methods=['GET', 'POST'])
 @login_required
 def viewStats():
-	return render_template('index.html')
+	print(flask_login.current_user.transactionHistory())
+	return render_template('yourstats.html')
 
 @app.route('/signup_success', methods=['GET', 'POST'])
+@login_required
 def success():
 	return render_template('signup_success.html')
 
