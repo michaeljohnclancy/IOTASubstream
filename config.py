@@ -4,7 +4,7 @@ class Config(object):
 	"""
 	Common configurations
 	"""
-
+	MYSQL_DATABASE_CHARSET = 'utf8mb4'
 	# Put any configurations here that are common across all environments
 
 class DevelopmentConfig(Config):

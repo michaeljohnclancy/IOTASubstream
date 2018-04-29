@@ -2,7 +2,6 @@ from flask import render_template
 from flask_login import current_user
 
 from ..forms import SendIotaForm
-from ..models import is_safe_url
 from . import home
 
 @home.route('/')
@@ -20,7 +19,14 @@ def sendiota():
 		
 		thread.start_new_thread(current_user.iota_send, (form.address.data, form.value.data, form.time.data, form.num_payments.data)) 
 
-		return redirect(url_for('success'))
+		return redirect(url_for('home.signup_success'))
 		
 
 	return render_template('/home/index.html', form=form)
+
+
+@home.route('/signup_success', methods=['GET'])
+def signup_success():
+
+	
+	return render_template('/home/signup_success.html', title="Signup Success")

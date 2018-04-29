@@ -32,7 +32,7 @@ def signup():
 		return redirect(url_for('auth.login'))
 
 
-	return render_template('auth/signup.html', form=form, title='Register')
+	return render_template('/auth/signup.html', form=form, title='Register')
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -52,7 +52,7 @@ def login():
 		else:
 			flash('Invalid email or password.')
 
-	return render_template('auth/login.html', form=form, title='Login')
+	return render_template('/auth/login.html', form=form, title='Login')
 
 
 @auth.route('/logout')

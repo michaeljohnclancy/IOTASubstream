@@ -1,0 +1,15 @@
+{% extends "theme.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<main class="center">
+<h1>{{ "Signout Successful!" }}</h1>
+ <br/>
+  {{ utils.flashed_messages() }}
+  <br/>
+</main>
+{% endblock %}

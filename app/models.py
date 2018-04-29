@@ -26,6 +26,7 @@ class User(UserMixin, db.Model):
 	password_hash = db.Column(db.String(80), nullable=False)
 	email = db.Column(db.String(120), unique=True, nullable=False)
 	seed = db.Column(db.String(120), unique=True, nullable=False)
+
 	#user_transactions = db.relationship('Transaction', backref='User', lazy='dynamic')
 
 	@property
@@ -78,7 +79,7 @@ class User(UserMixin, db.Model):
 
 @login_manager.user_loader
 def load_user(id):
-	return unicode(User.query.get(str(id)))
+	return User.query.get(unicode(str(id)))
 
 def is_safe_url(self, target):
 		ref_url = urlparse(request.host_url)

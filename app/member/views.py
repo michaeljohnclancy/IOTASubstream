@@ -8,4 +8,4 @@ from . import member
 def yourStats():
 
 	
-	return render_template('member/yourstats.html', title="Signup Success")
+	return render_template('/member/yourstats.html', title="Signup Success")
