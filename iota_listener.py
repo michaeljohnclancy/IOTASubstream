@@ -3,7 +3,7 @@ import csv
 import thread
 
 #Connects to node and opens API stream with seed
-node = "http://node02.iotatoken.nl:14265"
+node = "http://iota-tangle.io:14265"
 seed = "EYPZDLOZBKTECDHCBVGAGOHDIVEDRLGKLWDXXXSBPUBFAJOSSWXUSDYJSRFRYBQK9TMALDCDQHTBGMJRH"
 api = Iota(node)
 #Random seed for time being

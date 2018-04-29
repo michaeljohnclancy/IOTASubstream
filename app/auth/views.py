@@ -1,5 +1,5 @@
 from flask import flash, redirect, render_template, url_for
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
 from random import SystemRandom
 import uuid
 
@@ -46,6 +46,7 @@ def login():
 
 		if user is not None and user.verify_password(form.password.data):
 			login_user(user)
+			flash("Welcome, %s" % current_user.id)
 
 			return redirect(url_for('home.sendiota'))
 

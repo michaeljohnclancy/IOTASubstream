@@ -4,6 +4,7 @@ from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, Length
 import uuid
 from iota import *
+from time import sleep
 
 from passlib.context import CryptContext
 
@@ -21,7 +22,7 @@ class User(UserMixin, db.Model):
 
 	__tablename__ = 'users'
 
-	id = db.Column(db.String(128), unique=True, primary_key=True,)
+	id = db.Column(db.String(128), unique=True, primary_key=True)
 	identifier = db.Column(db.String(128), unique=True, index=True)
 	password_hash = db.Column(db.String(80), nullable=False)
 	email = db.Column(db.String(120), unique=True, nullable=False)
@@ -52,24 +53,21 @@ class User(UserMixin, db.Model):
 
 	def iota_send(self, targAddr, iotaVal, interval=0, numPayments=1):
 
-		api = Iota("http://node02.iotatoken.nl:14265", self.seed)
+		api = Iota("http://iota-tangle.io:14265", self.seed)
 
 		i = 0
 		while (i <= numPayments-1):
-			tx = ProposedTransaction(address=Address(target), value=value, tag=None, message=TryteString.from_string(current_user.identifier))
+			tx = ProposedTransaction(address=Address(targAddr), value=iotaVal, tag=None, message=TryteString.from_string(self.identifier))
 			api.send_transfer(depth = 100, transfers=[tx])
 
 			transaction = Transaction(transaction_id=uuid.uuid4(),
-				id=self.id,
+				identifier=self.identifier,
 				value=iotaVal,
 				target=targAddr,
 				timestamp=tx.timestamp
 				)
-			db.session.add(transaction)
-			db.session.commit()
-				
-			sleep(time)
 
+			sleep(time)
 			i += 1
 
 	def __repr__(self):
@@ -90,8 +88,9 @@ def is_safe_url(self, target):
 class Transaction(db.Model):
 	__tablename__ = 'transactions'
 
+
 	transaction_id = db.Column(db.Integer(), primary_key=True, unique=True)
-	id = db.Column(db.String(128))
+	identifier = db.Column(db.String(128))
 	value = db.Column(db.Integer(), default=0)
 	target = db.Column(db.String(128), nullable=False)
 	timestamp = db.Column(db.Integer(), nullable=False)

@@ -27,7 +27,7 @@ class LoginForm(FlaskForm):
 	submit = SubmitField("Login")
 
 class SendIotaForm(FlaskForm):
-	id = StringField('id:', validators=[DataRequired(), Length(min=6, max=24)])
+	identifier = StringField('id:', validators=[DataRequired(), Length(max=80)])
 	value = StringField('Value:', validators=[DataRequired()])
 	time = StringField('Time:', validators=[DataRequired()])
 	address = StringField('Address:', validators=[DataRequired(), Length(min=81, max=81)])

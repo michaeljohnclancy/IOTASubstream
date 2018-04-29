@@ -7,16 +7,13 @@
 {% block content %}
 
 <main class="center">
-Hi {{ current_user.userID }}!
+Hi {{ current_user.id }}!
 <h1>{{ self.title() }}</h1>
-{% if current_user.is_authenticated %}
-  Hi {{ current_user.userID }}!
-  {% for transaction in current_user.transactionHistory() %}
+  {% for transaction in user_transactions %}
   	<tr>
-  		<td>{{ transaction }}</td>
+  		<td>{{ transaction.transaction_id }}</td>
   	</tr>
   {% endfor %}
-{% endif %}
 
 
 
