@@ -8,7 +8,7 @@
 <main class="center">
 <h1>{{ self.title() }}</h1>
 <form method="POST">
-	{{ form.hidden_tag() }}
+	
 	{{ wtf.form_field(form.id) }}
 	{{ wtf.form_field(form.value) }}
 	{{ wtf.form_field(form.address) }}

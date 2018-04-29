@@ -1,8 +1,9 @@
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, Length
 import uuid
+from iota import *
 
 from passlib.context import CryptContext
 
@@ -27,7 +28,6 @@ class User(UserMixin, db.Model):
 	seed = db.Column(db.String(120), unique=True, nullable=False)
 	#user_transactions = db.relationship('Transaction', backref='User', lazy='dynamic')
 
-
 	@property
 	def password(self):
 		"""
@@ -49,21 +49,27 @@ class User(UserMixin, db.Model):
 		"""
 		return pwd_context.verify(password, self.password_hash)
 
+	def iota_send(self, targAddr, iotaVal, interval=0, numPayments=1):
 
+		api = Iota("http://node02.iotatoken.nl:14265", self.seed)
 
-	"""def iota_send(self, target, value, time=0, numPayments=1):
 		i = 0
 		while (i <= numPayments-1):
-			tx = ProposedTransaction(address=Address(target), value=value, tag=None, message=TryteString.from_string(self.id))
-			self.api.send_transfer(depth = 100, transfers=[tx])
-			
-			#Logs transaction to DB
-			self.db_connection.addTransaction(self.identifier, value, self.seed, target, tx.timestamp)
-			
-			print("Sent")
+			tx = ProposedTransaction(address=Address(target), value=value, tag=None, message=TryteString.from_string(current_user.identifier))
+			api.send_transfer(depth = 100, transfers=[tx])
+
+			transaction = Transaction(transaction_id=uuid.uuid4(),
+				id=self.id,
+				value=iotaVal,
+				target=targAddr,
+				timestamp=tx.timestamp
+				)
+			db.session.add(transaction)
+			db.session.commit()
+				
 			sleep(time)
+
 			i += 1
-		"""
 
 	def __repr__(self):
 		return '<User: {}>'.format(self.username)
