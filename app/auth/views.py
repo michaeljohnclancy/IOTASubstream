@@ -42,11 +42,10 @@ def login():
 
 	if form.validate_on_submit():
 
-		user = User.query.filter_by(id=form.id.data).first()
+		user = User.query.filter_by(id=str(form.id.data)).first()
 
 		if user is not None and user.verify_password(form.password.data):
 			login_user(user)
-			flash("Welcome, %s" % current_user.id)
 
 			return redirect(url_for('home.sendiota'))
 

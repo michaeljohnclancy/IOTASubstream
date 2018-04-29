@@ -67,7 +67,7 @@ class User(UserMixin, db.Model):
 				timestamp=tx.timestamp
 				)
 
-			sleep(time)
+			sleep(interval)
 			i += 1
 
 	def __repr__(self):
@@ -77,7 +77,7 @@ class User(UserMixin, db.Model):
 
 @login_manager.user_loader
 def load_user(id):
-	return User.query.get(unicode(str(id)))
+	return User.query.get(str(id))
 
 def is_safe_url(self, target):
 		ref_url = urlparse(request.host_url)
