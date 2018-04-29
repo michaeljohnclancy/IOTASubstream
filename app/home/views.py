@@ -1,5 +1,5 @@
 from flask import render_template
-from flask_login import login_required, current_user
+from flask_login import current_user
 
 from ..forms import SendIotaForm
 from ..models import is_safe_url
@@ -23,4 +23,4 @@ def sendiota():
 		return redirect(url_for('success'))
 		
 
-	return render_template('/home/index.html', form=form, next=next)
+	return render_template('/home/index.html', form=form)

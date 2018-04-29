@@ -13,15 +13,22 @@
 
 <header>
 <nav>
-	<h1>Pay IOTA</h1>
-	<a href="/">Home</a>
-	<a href="login">Login</a>
-	<a href="signup">Signup</a>
+	{% if current_user.is_authenticated %}
+		<h1>Pay IOTA</h1>
+		<a href="{{ url_for('home.sendiota') }}">Home</a>
+		<a href="{{ url_for('home.yourstats') }}">Your stats</a>
+		<a href="{{ url_for('auth.signout') }}">Signup</a>
+	{% else %}
+		<h1>Pay IOTA</h1>
+		<a href="{{ url_for('home.sendiota') }}">Home</a>
+		<a href="{{ url_for('auth.login') }}">Login</a>
+		<a href="{{ url_for('auth.signup') }}">Signup</a>
+	{% endif %}
 </nav>
-</header>
 
 {% block content %}
 {% endblock %}
+</header>
 
 </body>
 </html>

@@ -9,7 +9,7 @@ from .. import db
 from ..models import User
 
 @auth.route('/signup', methods=['GET', 'POST'])
-def register():
+def signup():
 
 	form = SignupForm()
 

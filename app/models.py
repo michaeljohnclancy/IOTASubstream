@@ -72,13 +72,13 @@ class User(UserMixin, db.Model):
 			i += 1
 
 	def __repr__(self):
-		return '<User: {}>'.format(self.username)
+		return '<User: {}>'.format(self.id)
 
 # Set up user_loader
 
 @login_manager.user_loader
 def load_user(id):
-	return User.query.get(str(id))
+	return unicode(User.query.get(str(id)))
 
 def is_safe_url(self, target):
 		ref_url = urlparse(request.host_url)
@@ -97,6 +97,4 @@ class Transaction(db.Model):
 
 	def __repr__(self):
 		return '<Transaction ID: {}>'.format(self.transaction_id)
-
-
 

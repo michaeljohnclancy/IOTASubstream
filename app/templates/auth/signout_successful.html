@@ -7,11 +7,9 @@
 
 {% block content %}
 <main class="center">
-<h1>{{ self.title() }}</h1>
+<h1>{{ "Signout Successful!" }}</h1>
  <br/>
   {{ utils.flashed_messages() }}
   <br/>
-	{{ form.hidden_tag() }}
-	{{ wtf.quick_form(form) }}
 </main>
 {% endblock %}

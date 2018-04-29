@@ -10,7 +10,7 @@ class SignupForm(FlaskForm):
 	password = PasswordField('Password:', validators=[DataRequired(), Length(min=8, max=80), EqualTo('confirm')])
 	confirm = PasswordField('Confirm password:')
 
-	submit = SubmitField("Register")
+	submit = SubmitField("Signup")
 
 	def validate_email(self, field):
 		if User.query.filter_by(email=field.data).first():
