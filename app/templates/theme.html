@@ -12,25 +12,20 @@
 <video playsinline autoplay muted loop id="bgvid">
     <source src="static/bg.mp4" type="video/mp4">
 </video>
-{% if current_user.is_authenticated %}
+
 <header>
 <nav>
-		<h1>Pay IOTA</h1>
-		<a href="{{ url_for('home.index') }}">Home</a>
+<h1>Pay IOTA</h1>
+<a href="{{ url_for('home.index') }}">Home</a>
+{% if current_user.is_authenticated %}
 		<a href="{{ url_for('member.yourStats') }}">Your stats</a>
 		<a href="{{ url_for('auth.logout') }}">Logout</a>
-</nav>
-</header>
 {% else %}
-<header>
-<nav>
-		<h1>Pay IOTA</h1>
-		<a href="{{ url_for('home.index') }}">Home</a>
 		<a href="{{ url_for('auth.login') }}">Login</a>
 		<a href="{{ url_for('auth.signup') }}">Signup</a>
+{% endif %}
 </nav>
 </header>
-{% endif %}
 
 {% block content %}
 {% endblock %}
