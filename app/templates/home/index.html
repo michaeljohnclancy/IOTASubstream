@@ -11,10 +11,10 @@
 <form method="POST">
 	{{ form.hidden_tag() }}
 	{{ wtf.form_field(form.identifier, value=current_user.identifier) }} 
-	{{ wtf.form_field(form.value) }}
 	{{ wtf.form_field(form.target) }}
+	{{ wtf.form_field(form.value) }}
 	{{ wtf.form_field(form.si) }}
-		</select><br>
+
 	{{ wtf.form_field(form.time) }}
 		<label class="units" for="time">seconds</label> <br>
 	{{ wtf.form_field(form.num_payments) }}

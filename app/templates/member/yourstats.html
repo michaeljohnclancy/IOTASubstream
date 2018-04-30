@@ -15,6 +15,9 @@ Hi {{ current_user.id }}!
 <br/>
 
 <table style="width:100%">
+{% if not user_transactions %}
+	<tr><td>No transactions.</td></tr>
+{% else %}
 {% for transaction in user_transactions %}
 	<tr>
   		<td>{{ transaction.transaction_id }}</td>
@@ -23,6 +26,7 @@ Hi {{ current_user.id }}!
   		<td>{{ transaction.timestamp }}</td>
   	</tr>
 {% endfor %}
+{% endif %}
 </table>
 
 </main>
