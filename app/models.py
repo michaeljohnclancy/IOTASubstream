@@ -22,9 +22,9 @@ class User(UserMixin, db.Model):
 
 	id = db.Column(db.String(128), unique=True, primary_key=True)
 	identifier = db.Column(db.String(128), unique=True, index=True)
-	password_hash = db.Column(db.String(80), nullable=False)
-	email = db.Column(db.String(120), unique=True, nullable=False)
-	seed = db.Column(db.String(120), unique=True, nullable=False)
+	password_hash = db.Column(db.String(128), nullable=False)
+	email = db.Column(db.String(128), unique=True, nullable=False)
+	seed = db.Column(db.String(128), unique=True, nullable=False)
 
 	#user_transactions = db.relationship('Transaction', backref='User', lazy='dynamic')
 
