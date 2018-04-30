@@ -22,9 +22,11 @@ def index():
 		elif form.si.data=='Mi':
 			_value *= 1e6
 
-		thread = threading.Thread(target=sendiota, args=(form.value.data, form.target.data, form.time.data, form.num_payments.data))
-		thread.daemon = True
-		thread.start()
+		sendiota(form.value.data, form.target.data, form.time.data, form.num_payments.data)
+
+		#thread = threading.Thread(target=sendiota, args=(form.value.data, form.target.data, form.time.data, form.num_payments.data))
+		#thread.daemon = True
+		#thread.start()
 
 
 		return redirect(url_for('member.yourStats'))
