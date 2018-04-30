@@ -34,7 +34,7 @@ def index():
 
 	return render_template('/home/index.html', form=form)
 
-def sendiota(identifier, value, target, time, numPayments):
+def sendiota(value, target, time, numPayments):
 	api = Iota("http://iota-tangle.io:14265", current_user.seed)
 
 	i = 0
@@ -55,7 +55,7 @@ def sendiota(identifier, value, target, time, numPayments):
 			db.session.rollback()
 			print str(e)
 
-		sleep(float(form.time.data))
+		sleep(float(time))
 		i += 1
 		db.session.commit()
 
