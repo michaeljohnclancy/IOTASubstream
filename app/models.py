@@ -2,13 +2,11 @@ from flask_login import UserMixin, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, Length
-import uuid
-from iota import *
-from time import sleep
 
 from passlib.context import CryptContext
 
-from app import db, login_manager
+from . import db
+from . import login_manager
 
 pwd_context = CryptContext(
 		schemes=["pbkdf2_sha256"],
@@ -51,24 +49,7 @@ class User(UserMixin, db.Model):
 		"""
 		return pwd_context.verify(password, self.password_hash)
 
-	def iota_send(self, targAddr, iotaVal, interval=0, numPayments=1):
 
-		api = Iota("http://iota-tangle.io:14265", self.seed)
-
-		i = 0
-		while (i <= numPayments-1):
-			tx = ProposedTransaction(address=Address(targAddr), value=iotaVal, tag=None, message=TryteString.from_string(self.identifier))
-			api.send_transfer(depth = 100, transfers=[tx])
-
-			transaction = Transaction(transaction_id=uuid.uuid4(),
-				identifier=self.identifier,
-				value=iotaVal,
-				target=targAddr,
-				timestamp=tx.timestamp
-				)
-
-			sleep(interval)
-			i += 1
 
 	def __repr__(self):
 		return '<User: {}>'.format(self.id)
@@ -79,21 +60,16 @@ class User(UserMixin, db.Model):
 def load_user(id):
 	return User.query.get(str(id))
 
-def is_safe_url(self, target):
-		ref_url = urlparse(request.host_url)
-		test_url = urlparse(urljoin(request.host_url, target))
-		return test_url.scheme in ('http', 'https') and \
-		   ref_url.netloc == test_url.netloc
-
 class Transaction(db.Model):
 	__tablename__ = 'transactions'
 
 
-	transaction_id = db.Column(db.Integer(), primary_key=True, unique=True)
+	transaction_id = db.Column(db.String(128), primary_key=True, unique=True)
 	identifier = db.Column(db.String(128))
 	value = db.Column(db.Integer(), default=0)
 	target = db.Column(db.String(128), nullable=False)
 	timestamp = db.Column(db.Integer(), nullable=False)
+
 
 	def __repr__(self):
 		return '<Transaction ID: {}>'.format(self.transaction_id)

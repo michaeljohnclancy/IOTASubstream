@@ -30,6 +30,6 @@ class SendIotaForm(FlaskForm):
 	identifier = StringField('id:', validators=[DataRequired(), Length(max=80)])
 	value = StringField('Value:', validators=[DataRequired()])
 	time = StringField('Time:', validators=[DataRequired()])
-	address = StringField('Address:', validators=[DataRequired(), Length(min=81, max=81)])
+	target = StringField('Address:', validators=[DataRequired(), Length(min=81, max=81)])
 	num_payments = StringField('Numer of payments:', validators=[Length(max=3)])
 	si = SelectField(u'si', choices=[('i', 'iota'), ('ki', 'kiota'), ('Mi', 'Miota')], validators=[DataRequired()])

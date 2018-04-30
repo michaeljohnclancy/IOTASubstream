@@ -1,4 +1,5 @@
 config.py
+/instance
 /instance/*
 */*.pyc
 *.pyc
