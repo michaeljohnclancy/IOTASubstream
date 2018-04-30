@@ -3,7 +3,7 @@ from flask_login import current_user
 import threading
 from iota import *
 import uuid
-from time import sleep
+from time import sleep, time
 
 
 from ..forms import SendIotaForm
@@ -34,7 +34,7 @@ def index():
 
 	return render_template('/home/index.html', form=form)
 
-def sendiota(value, target, time, numPayments):
+def sendiota(value, target, interval, numPayments):
 	api = Iota("http://iota-tangle.io:14265", current_user.seed)
 
 	i = 0
@@ -43,6 +43,7 @@ def sendiota(value, target, time, numPayments):
 		tx = ProposedTransaction(address=Address(str(target)), value=int(value), tag=None, message=TryteString.from_string(current_user.identifier))
 		api.send_transfer(depth = 100, transfers=[tx])
 
+		current_time = time()
 		transaction = Transaction(transaction_id=str(uuid.uuid4()),
 		identifier=current_user.identifier,
 			value=value,
@@ -54,10 +55,12 @@ def sendiota(value, target, time, numPayments):
 		except Exception, e:
 			db.session.rollback()
 			print str(e)
+		time_taken = time() - current_time
 
-		sleep(float(time))
+		sleep(float(abs(float(interval)-time_taken)))
 		i += 1
-		db.session.commit()
+	
+	db.session.commit()
 
 
 
