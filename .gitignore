@@ -1,3 +1,6 @@
+/migrations
+/migrations/*
+
 config.py
 /instance
 /instance/*
