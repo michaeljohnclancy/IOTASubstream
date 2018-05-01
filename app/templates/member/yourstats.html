@@ -2,8 +2,7 @@
 
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "bootstrap/utils.html" as utils %}
-
-
+<script src="dist/clipboard.min.js"></script>
 
 {% block content %}
 
@@ -19,11 +18,11 @@ Hi {{ current_user.id }}!
 	<tr><td>No transactions.</td></tr>
 {% else %}
 	<thead>
-		<tr>
+		<th>
 			<td>Value</td>
 			<td>Target</td>
 			<td>Timestamp</td>
-		</tr>
+		</th>
 	</thead>
 {% for transaction in user_transactions %}
 	<tr>
