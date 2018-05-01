@@ -41,7 +41,9 @@ def sendiota(value, target, interval, numPayments):
 
 	while (i <= int(numPayments)-1):
 		tx = ProposedTransaction(address=Address(str(target)), value=int(value), tag=None, message=TryteString.from_string(current_user.identifier))
-		api.send_transfer(depth = 100, transfers=[tx])
+		thread = threading.Thread(target=api.send_transfer, kwargs = {'depth': 100, 'transfers':[tx]})
+		thread.daemon = True
+		thread.start()
 
 		current_time = time()
 		transaction = Transaction(transaction_id=str(uuid.uuid4()),

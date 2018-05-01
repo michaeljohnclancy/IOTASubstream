@@ -18,9 +18,15 @@ Hi {{ current_user.id }}!
 {% if not user_transactions %}
 	<tr><td>No transactions.</td></tr>
 {% else %}
+	<thead>
+		<tr>
+			<td>Value</td>
+			<td>Target</td>
+			<td>Timestamp</td>
+		</tr>
+	</thead>
 {% for transaction in user_transactions %}
 	<tr>
-  		<td>{{ transaction.transaction_id }}</td>
   		<td>{{ transaction.value }}</td>
   		<td>{{ transaction.target }}</td>
   		<td>{{ transaction.timestamp }}</td>

@@ -45,6 +45,25 @@ h1{
 	margin-bottom: 50px;
 }
 
+table{
+	table-layout: fixed;
+	width: 100%;
+	border-collapse: collapse;
+	border: 3px solid purple;
+}
+
+thead th:nth-child(1) {
+  width: 5%;
+}
+
+thead th:nth-child(2) {
+  width: 50%;
+}
+
+thead th:nth-child(3) {
+  width: 45%;
+}
+
 input, select{
 	background-color: rgba(20, 54, 92, 0.2);
 	border: none;
