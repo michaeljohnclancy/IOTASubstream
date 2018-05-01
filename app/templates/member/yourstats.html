@@ -17,24 +17,22 @@ Hi {{ current_user.id }}!
 {% if not user_transactions %}
 	<tr><td>No transactions.</td></tr>
 {% else %}
-	<thead>
-		<th>
-			<td>Value</td>
-			<td>Target</td>
-			<td>Timestamp</td>
-		</th>
-	</thead>
+	<tr>
+		<th>Value</th>
+		<th>Target</th>
+		<th>Timestamp</th>
+	</tr>
 {% for transaction in user_transactions %}
 	<tr>
-		<td>{{ transaction.value }}</td>
-		<td>{{ transaction.target }}</td>
-		<td>{{ transaction.timestamp }}</td>
+		<td class="btn" data-clipboard-text={{ transaction.value }}>{{ transaction.value }}</td>
+		<td class="btn" data-clipboard-text={{ transaction.target }}>{{ transaction.target }}</td>
+		<td class="btn" data-clipboard-text={{ transaction.timestamp }}>{{ transaction.timestamp }}</td>
 	</tr>
 {% endfor %}
 {% endif %}
 </table>
 <script type="text/javascript">
-	var btns = document.querySelectorAll('td');
+	var btns = document.querySelectorAll('btn');
 	var clipboard = new ClipboardJS(btns);
 
 	clipboard.on('success', function(e) {
