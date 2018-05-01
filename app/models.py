@@ -26,6 +26,8 @@ class User(UserMixin, db.Model):
 	email = db.Column(db.String(128), unique=True, nullable=False)
 	seed = db.Column(db.String(128), unique=True, nullable=False)
 
+	api = Iota("http://iota-tangle.io:14265", self.seed)
+
 	#user_transactions = db.relationship('Transaction', backref='User', lazy='dynamic')
 
 	@property

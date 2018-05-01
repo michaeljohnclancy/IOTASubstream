@@ -35,13 +35,12 @@ def index():
 	return render_template('/home/index.html', form=form)
 
 def sendiota(value, target, interval, numPayments):
-	api = Iota("http://iota-tangle.io:14265", current_user.seed)
 
 	i = 0
 
 	while (i <= int(numPayments)-1):
 		tx = ProposedTransaction(address=Address(str(target)), value=int(value), tag=None, message=TryteString.from_string(current_user.identifier))
-		thread = threading.Thread(target=api.send_transfer, kwargs = {'depth': 100, 'transfers':[tx]})
+		thread = threading.Thread(target=current_user.api.send_transfer, kwargs = {'depth': 100, 'transfers':[tx]})
 		thread.daemon = True
 		thread.start()
 
@@ -63,6 +62,14 @@ def sendiota(value, target, interval, numPayments):
 		i += 1
 	
 	db.session.commit()
+
+@home.route('topup', methods=['GET', 'POST'])
+def topupAccount():
+
+	newAddress = str(current_user.api.get_new_addresses(count=0))
+
+	return render_template('/home/topup.html', new_address = newAddress)
+
 
 
 
