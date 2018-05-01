@@ -46,22 +46,24 @@ h1{
 }
 
 table{
-	table-layout: fixed;
-	width: 100%;
 	border-collapse: collapse;
-	border: 3px solid purple;
+	border-radius: 10px;
+	/*background-color: rgba(176, 255, 227, 0.5);
+	color: #222222;*/
+	color: #ABDBFF;
+	overflow: hidden;
 }
 
-thead th:nth-child(1) {
-  width: 5%;
+td, th{
+	background-color: rgba(17,45,77, 0.5);
+	padding: 30px;
+	overflow: hidden;
+	max-width: 200px;
 }
 
-thead th:nth-child(2) {
-  width: 50%;
-}
-
-thead th:nth-child(3) {
-  width: 45%;
+th{
+	font-size: 1.4em;
+	background-color: rgba(17,45,77, 0.6);
 }
 
 input, select{
