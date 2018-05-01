@@ -25,7 +25,7 @@ Hi {{ current_user.id }}!
 	<tr>
 		<td>{{ transaction.value }}</td>
 		<td><a href="https://thetangle.org/address/{{transaction.target}}">{{ transaction.target }}</a></td>
-		<td>{{ transaction.timestamp }}{{ transaction.timestamp }}</td>
+		<td>{{ from_datetime(transaction.timestamp) }}</td>
 	</tr>
 {% endfor %}
 {% endif %}

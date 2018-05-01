@@ -3,6 +3,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, Length
 
+from iota import *
+
 from passlib.context import CryptContext
 
 from . import db
@@ -26,9 +28,14 @@ class User(UserMixin, db.Model):
 	email = db.Column(db.String(128), unique=True, nullable=False)
 	seed = db.Column(db.String(128), unique=True, nullable=False)
 
-	api = Iota("http://iota-tangle.io:14265", self.seed)
-
 	#user_transactions = db.relationship('Transaction', backref='User', lazy='dynamic')
+	
+
+	def api(self):
+		return Iota("http://iota-tangle.io:14265", self.seed)
+	
+
+
 
 	@property
 	def password(self):
