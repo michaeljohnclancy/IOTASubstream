@@ -2,7 +2,6 @@
 
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "bootstrap/utils.html" as utils %}
-<script src="app/static/clipboard.min.js"></script>
 
 {% block content %}
 
@@ -24,25 +23,13 @@ Hi {{ current_user.id }}!
 	</tr>
 {% for transaction in user_transactions %}
 	<tr>
-		<td class="btn" data-clipboard-text={{ transaction.value }}>{{ transaction.value }}</td>
-		<td class="btn" data-clipboard-text={{ transaction.target }}>{{ transaction.target }}</td>
-		<td class="btn" data-clipboard-text={{ transaction.timestamp }}>{{ transaction.timestamp }}</td>
+		<td>{{ transaction.value }}</td>
+		<td><a href="https://thetangle.org/address/{{transaction.target}}">{{ transaction.target }}</a></td>
+		<td>{{ transaction.timestamp }}{{ transaction.timestamp }}</td>
 	</tr>
 {% endfor %}
 {% endif %}
 </table>
-<script type="text/javascript">
-	var btns = document.querySelectorAll('.btn');
-	var clipboard = new ClipboardJS(btns);
-
-	clipboard.on('success', function(e) {
-		console.log(e);
-	});
-	clipboard.on('error', function(e) {
-		console.log(e);
-	});
-
-</script>
 
 </main>
 

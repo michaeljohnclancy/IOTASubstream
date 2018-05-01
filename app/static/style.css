@@ -45,6 +45,16 @@ h1{
 	margin-bottom: 50px;
 }
 
+a{
+	text-decoration: none;
+	color: #00D5FF;
+}
+
+a:hover{
+	color: #ABF1FF;
+	text-shadow: 0px 0px 5px rgba(171, 241, 255, 0.5);
+}
+
 table{
 	border-collapse: collapse;
 	border-radius: 10px;
@@ -58,6 +68,7 @@ td, th{
 	background-color: rgba(17,45,77, 0.5);
 	padding: 30px;
 	overflow: hidden;
+	text-overflow: ellipsis;
 	max-width: 200px;
 }
 
