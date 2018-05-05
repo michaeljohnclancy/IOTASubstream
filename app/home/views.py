@@ -7,6 +7,7 @@ from iota import *
 
 
 from ..forms import SendIotaForm
+from .. import iota_funcs
 from . import home
 from ..models import Transaction
 from .. import db
@@ -22,7 +23,7 @@ def index():
 		elif form.si.data=='Mi':
 			_value *= 1e6
 
-		sendiota(form.value.data, form.target.data, form.time.data, form.num_payments.data)
+		iota_funcs.sendiota(form.value.data, form.target.data, form.time.data, form.num_payments.data)
 
 		#thread = threading.Thread(target=sendiota, args=(form.value.data, form.target.data, form.time.data, form.num_payments.data))
 		#thread.daemon = True
@@ -66,8 +67,7 @@ def sendiota(value, target, interval, numPayments):
 @home.route('/topup', methods=['GET', 'POST'])
 def topupAccount():
 
-	newAddress = str(current_user.api().get_new_addresses(count=1))
-
+	newAddress = str(current_user.api().get_new_addresses(count=1)['addresses'][0])
 	return render_template('/home/topup.html', new_address = newAddress)
 
 

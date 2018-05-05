@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, BooleanField, SelectField, SubmitField, ValidationError
+from wtforms import PasswordField, StringField, IntegerField, BooleanField, SelectField, SubmitField, ValidationError
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 from .models import User
@@ -28,8 +28,8 @@ class LoginForm(FlaskForm):
 
 class SendIotaForm(FlaskForm):
 	identifier = StringField('id:', validators=[DataRequired(), Length(max=80)])
-	value = StringField('Value:', validators=[DataRequired()])
-	time = StringField('Time:', validators=[DataRequired()])
+	value = IntegerField('Value:', validators=[DataRequired()])
+	time = IntegerField('Time:', validators=[DataRequired()])
 	target = StringField('Address:', validators=[DataRequired(), Length(min=81, max=81)])
-	num_payments = StringField('Numer of payments:', validators=[Length(max=3)])
+	num_payments = IntegerField('Numer of payments:', validators=[Length(max=3)])
 	si = SelectField(u'si', choices=[('i', 'iota'), ('ki', 'kiota'), ('Mi', 'Miota')], validators=[DataRequired()])

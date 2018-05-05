@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
 
 <html>
 <head>
@@ -28,6 +29,10 @@
 {% endif %}
 </nav>
 </header>
+{% if current_user.is_authenticated %}
+	{{ listen_loop() }}
+{% endif %}
+{{ utils.flashed_messages() }}
 
 {% block content %}
 {% endblock %}

@@ -1,5 +1,16 @@
 {% extends "theme.html" %}
 
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
 
-{% block title %}Topup your account!{% endblock %}
+{% block content %}
+
+<h1>{{ self.title() }}</h1>
+<main class="center">
+<br/>
+  {{ utils.flashed_messages() }}
+<br/>
+<h3>Send your IOTA to this address: {{ new_address }}</h3>
+</main>
+
+{% endblock %}

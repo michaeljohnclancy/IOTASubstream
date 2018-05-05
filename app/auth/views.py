@@ -2,11 +2,12 @@ from flask import flash, redirect, render_template, url_for
 from flask_login import login_required, login_user, logout_user, current_user
 from random import SystemRandom
 import uuid
+import threading
 
 from . import auth
 from ..forms import LoginForm, SignupForm
 from .. import db
-from ..models import User
+from ..models import User, Transaction
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -53,7 +54,6 @@ def login():
 			flash('Invalid email or password.')
 
 	return render_template('/auth/login.html', form=form, title='Login')
-
 
 @auth.route('/logout')
 @login_required
