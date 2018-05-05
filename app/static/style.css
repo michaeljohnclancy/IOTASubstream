@@ -92,7 +92,7 @@ select{
 }
 
 input:invalid, select:invalid{
-	box-shadow: inset 0px 0px 10px 0px rgba(255,0,130, 0.7);
+	/*box-shadow: inset 0px 0px 10px 0px rgba(255,0,130, 0.7);*/
 }
 
 input[type="number"]{
@@ -188,10 +188,11 @@ hr{
 }
 
 header{
-	background-color: rgba(190,180,255, 0.2);
+	background-color: rgba(17,45,77, 0.6);
 	color: #FFFFFF;
 	padding: 0px;
 	margin: 0px;
+	margin-bottom: 100px;
 	text-align: right;
 }
 
@@ -216,4 +217,49 @@ header h1{
 	position-left: 0px;
 	position-top: 0px;
 	font-size: 40px;
+}
+
+header div.dropdown{
+	display: inline-block;
+	margin: 10px;
+	margin-left: 0px;
+	margin-bottom: 0px;
+	padding: 20px;
+	padding-bottom: 30px;
+	border-radius: 5px 5px 0px 0px;
+	cursor: default;
+}
+
+header ul.dropdown{
+	list-style-type: none;
+	position: absolute;
+	right: 0px;
+	top: 64px;
+
+	background-color: rgba(190,180,255, 0.2);
+	overflow: hidden;
+	width: 200px;
+	padding: 0px;
+	max-height: 0%;
+}
+
+header div.dropdown:hover + ul.dropdown, header ul.dropdown:hover{
+	max-height: 100%;
+}
+
+header div.dropdown:hover{
+	background-color: rgba(190,180,255, 0.5);
+}
+
+header ul.dropdown li a{
+	text-align: left;
+	border-radius: 0px;
+	box-shadow: none;
+	color: inherit;
+	width: 160px;
+	margin: 0px;
+}
+
+header ul.dropdown li a:hover{
+	background-color: rgba(190,180,255, 0.5);
 }
