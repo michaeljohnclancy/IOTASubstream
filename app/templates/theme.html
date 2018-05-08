@@ -35,9 +35,6 @@
 {% endif %}
 </nav>
 </header>
-{% if current_user.is_authenticated %}
-	{{ listen_loop() }}
-{% endif %}
 {{ utils.flashed_messages() }}
 
 {% block content %}

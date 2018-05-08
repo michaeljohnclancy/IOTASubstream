@@ -15,7 +15,3 @@ if __name__ == '__main__':
 @app.context_processor
 def inject_sum_function():
     return dict(sum=sum)
-
-@app.context_processor
-def inject_iota_loop():
-	return dict(listen_loop=iota_funcs.listen_loop)

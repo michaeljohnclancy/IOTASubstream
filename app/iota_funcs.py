@@ -3,23 +3,30 @@ from models import Transaction
 from iota import *
 from flask_login import current_user
 import threading
+from flask import jsonify
 
-def create_api():
-	api = Iota("http://node05.iotatoken.nl:16265", current_user.seed)
+import celery
+
+
+def create_api(seed):
+	api = Iota("http://node05.iotatoken.nl:16265", seed)
 	return api
 
-def sendiota(value, target, interval, numPayments):
+
+@celery.task()
+def sendiota(user, value, target, interval, numPayments):
 	i = 0
 
 	while (i <= int(numPayments)-1):
-		tx = ProposedTransaction(address=Address(str(target)), value=int(value), tag=None, message=TryteString.from_string(current_user.identifier))
-		thread = threading.Thread(target=create_api().send_transfer, kwargs = {'depth': 100, 'transfers':[tx]})
+		current_time = time()
+
+		tx = ProposedTransaction(address=Address(str(target)), value=int(value), tag=None, message=TryteString.from_string(user.identifier))
+		thread = threading.Thread(target=create_api(current_user.seed).send_transfer, kwargs = {'depth': 100, 'transfers':[tx]})
 		thread.daemon = True
 		thread.start()
 
-		current_time = time()
 		transaction = Transaction(transaction_id=str(uuid.uuid4()),
-		identifier=current_user.identifier,
+		identifier=user.identifier,
 			value=value,
 			target=target,
 			timestamp=tx.timestamp)
@@ -36,41 +43,39 @@ def sendiota(value, target, interval, numPayments):
 
 	db.session.commit()
 
-def listen_loop():
-	thread = threading.Thread(target=loop)
-	thread.daemon = True
-	thread.start()
 
-def loop():  #Continuously checks the IOTA network for new payments:
-		ms = get_bundles()
-		n = len(ms)
-		while(True):
-			ms = get_bundles(n)  #TODO This is a bottleneck
-			if len(ms)==0:
-				continue
-			else:
-				new_messages = {}
-				for message in ms:
-					transaction = interpret_transaction(message)
-					flash(transaction)
+@celery.task()
+def loop(seed):  #Continuously checks the IOTA network for new payments:
+	ms = get_bundles(seed)
+	n = len(ms)
+	while(True):
+		ms = get_bundles(seed, n)  #TODO This is a bottleneck
+		if len(ms)==0:
+			continue
+		else:
+			new_messages = {}
+			for message in ms:
+				transaction = interpret_transaction(message)
+				print(transaction)
+	return jsonify({"Status":1})
 
 
 def interpret_transaction(m):  #Decrypts and executes instruction:
-		tx = m[0]
-		identifier = TryteString.decode(tx.signature_message_fragment)
-		transactionValue = tx.value
-		timestamp = tx.timestamp
+	tx = m[0]
+	identifier = TryteString.decode(tx.signature_message_fragment)
+	transactionValue = tx.value
+	timestamp = tx.timestamp
 
-		incomingTransaction = Transaction(transaction_id=str(uuid.uuid4()),
-			identifier=identifier,
-			value=transaction_value,
-			target=None,
-			timestamp=timestamp)
+	incomingTransaction = Transaction(transaction_id=str(uuid.uuid4()),
+		identifier=identifier,
+		value=transaction_value,
+		target=None,
+		timestamp=timestamp)
 
-		db.session.add(incomingTransaction)
-		db.session.commit()
+	db.session.add(incomingTransaction)
+	db.session.commit()
 
-		return incomingTransaction
+	return incomingTransaction
 
-def get_bundles(n=None):  #Get all messages from the IOTA network:
-	return create_api().get_transfers(start=n).get(u'bundles')
+def get_bundles(seed, n=None):  #Get all messages from the IOTA network:
+	return create_api(seed).get_transfers(start=n).get(u'bundles')

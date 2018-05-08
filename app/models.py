@@ -7,7 +7,7 @@ import iota_funcs
 
 from passlib.context import CryptContext
 
-from . import db
+from __init__ import db
 from . import login_manager
 
 pwd_context = CryptContext(
@@ -31,7 +31,7 @@ class User(UserMixin, db.Model):
 	#user_transactions = db.relationship('Transaction', backref='User', lazy='dynamic')
 	
 	def api(self):
-		return iota_funcs.create_api()
+		return iota_funcs.create_api(self.seed)
 
 	@property
 	def password(self):
