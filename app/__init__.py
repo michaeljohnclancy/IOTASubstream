@@ -7,11 +7,16 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 
+from celery import Celery
+
+
 # local imports
 from config import app_config
 
+
 login_manager = LoginManager()
 db = SQLAlchemy()
+
 
 
 def create_app(config_name):
@@ -23,6 +28,7 @@ def create_app(config_name):
 		db.init_app(app)
 	
 	Bootstrap(app)
+	celery = make_celery(app)
 	login_manager.init_app(app)
 	login_manager.login_message = "You must be logged in to access this page."
 	login_manager.login_view = "auth.login"
@@ -45,4 +51,15 @@ def create_app(config_name):
 	return app
 
 
-	
+def make_celery(app):
+	celery = Celery(app.import_name, backend=app.config['CELERY_RESULT_BACKEND'],
+					broker=app.config['CELERY_BROKER_URL'])
+	celery.conf.update(app.config)
+	TaskBase = celery.Task
+	class ContextTask(TaskBase):
+		abstract = True
+		def __call__(self, *args, **kwargs):
+			with app.app_context():
+				return TaskBase.__call__(self, *args, **kwargs)
+	celery.Task = ContextTask
+	return celery

@@ -8,6 +8,7 @@ from . import auth
 from ..forms import LoginForm, SignupForm
 from .. import db
 from ..models import User, Transaction
+from ..iota_funcs import loop
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -47,6 +48,8 @@ def login():
 
 		if user is not None and user.verify_password(form.password.data):
 			login_user(user)
+			loop.delay(current_user.seed)
+
 
 			return redirect(url_for('home.index'))
 
