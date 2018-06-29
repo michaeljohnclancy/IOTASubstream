@@ -6,7 +6,7 @@ import threading
 
 from . import auth
 from ..forms import LoginForm, SignupForm
-from .. import db
+from .. import db, oauth
 from ..models import User, Transaction
 from ..tasks import loop
 
@@ -72,7 +72,29 @@ def json_login():
     data = [{'id':0, 'name':'Simple Payment', 'details':'Details...'},{'id':1, 'name':'Flash Payments', 'details':'Details n.2'}]
     return render_template('/auth/json_login.html', title='JSON Login', company_name="Netflix", options=data)
 
+<<<<<<< HEAD
 @auth.route('/AJAX_request', methods=['POST'])
 @login_required
 def ajax_request():
     return render_template('/auth/basic_payment.html', title='Basic Payment', iota=1, time=1)
+=======
+@auth.route('/auth/authorize', methods=['GET', 'POST'])
+@login_required
+@oauth.authorize_handler
+def authorize(*args, **kwargs):
+    if request.method == 'GET':
+        client_id = kwargs.get('client_id')
+        client = Client.query.filter_by(client_id=client_id).first()
+        kwargs['client'] = client
+        return render_template('oauthorize.html', **kwargs)
+
+    confirm = request.form.get('confirm', 'no')
+    return confirm == 'yes'
+
+@auth.route('/auth/token')
+@oauth.token_handler
+def access_token():
+    return None
+
+
+>>>>>>> refs/remotes/origin/master

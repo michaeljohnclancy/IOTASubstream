@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
+from flask_oauthlib.provider import OAuth2Provider
 
 
 # local imports
@@ -13,6 +14,7 @@ from config import app_config
 
 login_manager = LoginManager()
 db = SQLAlchemy()
+oauth = OAuth2Provider()
 
 
 def create_app(config_name):
@@ -22,12 +24,15 @@ def create_app(config_name):
 
 	with app.app_context():
 		db.init_app(app)
+
 	
 	Bootstrap(app)
 	login_manager.init_app(app)
 	login_manager.login_message = "You must be logged in to access this page."
 	login_manager.login_view = "auth.login"
 	migrate = Migrate(app, db, compare_type=True)
+
+	oauth.init_app(app)
 
 
 	from app import models
