@@ -7,7 +7,6 @@
 *{
 	font-family: Roboto;
 	font-size: 18px;
-	transition: 0.5s;
 }
 
 @keyframes grad{
@@ -48,6 +47,7 @@ h1{
 a{
 	text-decoration: none;
 	color: #00D5FF;
+	transition: 0.5s;
 }
 
 a:hover{
@@ -83,6 +83,7 @@ input, select{
 	color: #94ADE8;
 	padding: 15px;
 	border-radius: 5px;
+	transition: 0.5s;
 }
 
 select{
@@ -194,6 +195,7 @@ header{
 	margin: 0px;
 	margin-bottom: 100px;
 	text-align: right;
+	height: 82px;
 }
 
 header a{
@@ -228,6 +230,7 @@ header div.dropdown{
 	padding-bottom: 30px;
 	border-radius: 5px 5px 0px 0px;
 	cursor: default;
+	transition: 0.5s;
 }
 
 header ul.dropdown{
@@ -241,6 +244,7 @@ header ul.dropdown{
 	width: 200px;
 	padding: 0px;
 	max-height: 0%;
+	transition: 0.5s;
 }
 
 header div.dropdown:hover + ul.dropdown, header ul.dropdown:hover{
