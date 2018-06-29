@@ -1,6 +1,9 @@
 /migrations
 /migrations/*
 
+/env
+/env/*
+
 config.py
 /instance
 /instance/*
