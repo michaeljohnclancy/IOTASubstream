@@ -6,7 +6,7 @@ import threading
 
 from . import auth
 from ..forms import LoginForm, SignupForm
-from .. import db
+from .. import db, oauth
 from ..models import User, Transaction
 from ..tasks import loop
 
@@ -66,5 +66,23 @@ def logout():
 
 	return redirect(url_for('auth.login'))
 
+
+@auth.route('/auth/authorize', methods=['GET', 'POST'])
+@login_required
+@oauth.authorize_handler
+def authorize(*args, **kwargs):
+    if request.method == 'GET':
+        client_id = kwargs.get('client_id')
+        client = Client.query.filter_by(client_id=client_id).first()
+        kwargs['client'] = client
+        return render_template('oauthorize.html', **kwargs)
+
+    confirm = request.form.get('confirm', 'no')
+    return confirm == 'yes'
+
+@auth.route('/auth/token')
+@oauth.token_handler
+def access_token():
+    return None
 
 
