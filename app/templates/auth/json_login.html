@@ -1,0 +1,41 @@
+{% extends "theme.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}IOTA Payments{% endblock %}
+
+{% block content %}
+
+<main class="center">
+<div class="company_banner">{{ company_name }}</div>
+
+<div class="jsform" id="jsform">
+	{% for option in options %}
+	<input type="button" name="{{option['id']}}" value="{{option['name']}}" onclick="request_payment({{option['id']}});">
+	<div class="details">{{option['details']}}</div><br>
+	{% endfor %}
+</div>
+<img class="loadIcon" src="static/loadIcon.svg">
+
+<script type="text/javascript">
+	function request_payment(id) {
+		var jsform = document.getElementById("jsform");
+		jsform.classList.add("loading");
+		var req = new XMLHttpRequest();
+		req.onreadystatechange = function() {
+			if (this.readyState==4 && this.status==200) {
+				jsform.innerHTML = this.responseText;
+				jsform.classList.remove("loading");
+			}
+		};
+		req.open("POST","/AJAX_request")
+		req.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+		var postVars = 'id='+id
+		req.send(postVars)
+
+		return true
+	}
+</script>
+
+</main>
+
+{% endblock %}

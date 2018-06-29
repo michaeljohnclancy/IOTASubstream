@@ -66,5 +66,13 @@ def logout():
 
 	return redirect(url_for('auth.login'))
 
+@auth.route('/json_login')
+@login_required
+def json_login():
+    data = [{'id':0, 'name':'Simple Payment', 'details':'Details...'},{'id':1, 'name':'Flash Payments', 'details':'Details n.2'}]
+    return render_template('/auth/json_login.html', title='JSON Login', company_name="Netflix", options=data)
 
-
+@auth.route('/AJAX_request', methods=['POST'])
+@login_required
+def ajax_request():
+    return render_template('/auth/basic_payment.html', title='Basic Payment', iota=1, time=1)
