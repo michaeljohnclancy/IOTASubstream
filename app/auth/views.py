@@ -8,7 +8,7 @@ from . import auth
 from ..forms import LoginForm, SignupForm
 from .. import db
 from ..models import User, Transaction
-from ..iota_funcs import loop
+from ..tasks import loop
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():

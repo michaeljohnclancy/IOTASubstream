@@ -1,7 +1,7 @@
 # app/__init__.py
 
 # third-party imports
-from flask import Flask
+from flask import Flask, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -9,14 +9,13 @@ from flask_bootstrap import Bootstrap
 
 from celery import Celery
 
-
 # local imports
 from config import app_config
 
 
+
 login_manager = LoginManager()
 db = SQLAlchemy()
-
 
 
 def create_app(config_name):
@@ -26,17 +25,18 @@ def create_app(config_name):
 
 	with app.app_context():
 		db.init_app(app)
+		#mycelery = make_celery(current_app)
 	
 	Bootstrap(app)
-	celery = make_celery(app)
 	login_manager.init_app(app)
 	login_manager.login_message = "You must be logged in to access this page."
 	login_manager.login_view = "auth.login"
 	migrate = Migrate(app, db, compare_type=True)
 
 
-	from app import models
 
+
+	from app import models
 	
 	from .home import home as home_blueprint
 	app.register_blueprint(home_blueprint)
@@ -52,6 +52,7 @@ def create_app(config_name):
 
 
 def make_celery(app):
+	print(app.import_name)
 	celery = Celery(app.import_name, backend=app.config['CELERY_RESULT_BACKEND'],
 					broker=app.config['CELERY_BROKER_URL'])
 	celery.conf.update(app.config)

@@ -7,7 +7,7 @@ from iota import *
 
 
 from ..forms import SendIotaForm
-from .. import iota_funcs
+from .. import tasks
 from . import home
 from ..models import Transaction
 from .. import db
@@ -23,7 +23,7 @@ def index():
 		elif form.si.data=='Mi':
 			_value *= 1e6
 
-		iota_funcs.sendiota.delay(current_user.identifier, form.value.data, form.target.data, form.time.data, form.num_payments.data)
+		tasks.sendiota.delay(current_user, form.value.data, form.target.data, form.time.data, form.num_payments.data)
 
 		return redirect(url_for('member.yourStats'))
 		

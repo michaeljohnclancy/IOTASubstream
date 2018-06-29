@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, IntegerField, BooleanField, SelectField, SubmitField, ValidationError
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange
 
 from .models import User
 
@@ -31,5 +31,5 @@ class SendIotaForm(FlaskForm):
 	value = IntegerField('Value:', validators=[DataRequired()])
 	time = IntegerField('Time:', validators=[DataRequired()])
 	target = StringField('Address:', validators=[DataRequired(), Length(min=81, max=81)])
-	num_payments = IntegerField('Numer of payments:', validators=[Length(max=3)])
+	num_payments = IntegerField('Numer of payments:', validators=[NumberRange(min=0, max=999)])
 	si = SelectField(u'si', choices=[('i', 'iota'), ('ki', 'kiota'), ('Mi', 'Miota')], validators=[DataRequired()])

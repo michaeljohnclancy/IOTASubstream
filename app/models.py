@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, Length
 
-import iota_funcs
+import tasks
 
 from passlib.context import CryptContext
 
@@ -31,7 +31,7 @@ class User(UserMixin, db.Model):
 	#user_transactions = db.relationship('Transaction', backref='User', lazy='dynamic')
 	
 	def api(self):
-		return iota_funcs.create_api(self.seed)
+		return tasks.create_api(self.seed)
 
 	@property
 	def password(self):

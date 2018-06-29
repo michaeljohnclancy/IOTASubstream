@@ -1,9 +1,8 @@
 # run.py
 
 import os
-import threading
 
-from app import create_app, iota_funcs
+from app import create_app, tasks, make_celery
 
 config_name = os.getenv('FLASK_CONFIG')
 app = create_app(config_name)
@@ -15,3 +14,4 @@ if __name__ == '__main__':
 @app.context_processor
 def inject_sum_function():
     return dict(sum=sum)
+

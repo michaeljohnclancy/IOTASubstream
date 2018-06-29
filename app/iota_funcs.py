@@ -7,9 +7,8 @@ from flask import jsonify
 
 import celery
 
-
 def create_api(seed):
-	api = Iota("http://node05.iotatoken.nl:16265", seed)
+	api = Iota("http://node02.iotatoken.nl:14265", seed)
 	return api
 
 
@@ -21,9 +20,8 @@ def sendiota(user, value, target, interval, numPayments):
 		current_time = time()
 
 		tx = ProposedTransaction(address=Address(str(target)), value=int(value), tag=None, message=TryteString.from_string(user.identifier))
-		thread = threading.Thread(target=create_api(current_user.seed).send_transfer, kwargs = {'depth': 100, 'transfers':[tx]})
-		thread.daemon = True
-		thread.start()
+		user.create_api(user.seed).send_transfer(depth=10, transfers=[tx])
+		print(tx)
 
 		transaction = Transaction(transaction_id=str(uuid.uuid4()),
 		identifier=user.identifier,
