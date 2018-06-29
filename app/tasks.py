@@ -5,16 +5,10 @@ from flask_login import current_user
 import threading
 from flask import jsonify, current_app
 
-with app.app_context():
-	mycelery = make_celery(current_app)
-
-
 def create_api(seed):
 	api = Iota("http://node02.iotatoken.nl:14265", seed)
 	return api
 
-
-@mycelery.task()
 def sendiota(user, value, target, interval, numPayments):
 	i = 0
 
@@ -43,8 +37,6 @@ def sendiota(user, value, target, interval, numPayments):
 
 	db.session.commit()
 
-
-@mycelery.task()
 def loop(seed):  #Continuously checks the IOTA network for new payments:
 	ms = get_bundles(seed)
 	n = len(ms)

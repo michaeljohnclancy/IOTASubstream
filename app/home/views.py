@@ -23,7 +23,7 @@ def index():
 		elif form.si.data=='Mi':
 			_value *= 1e6
 
-		tasks.sendiota.delay(current_user, form.value.data, form.target.data, form.time.data, form.num_payments.data)
+		tasks.sendiota(current_user, form.value.data, form.target.data, form.time.data, form.num_payments.data)
 
 		return redirect(url_for('member.yourStats'))
 		
