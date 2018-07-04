@@ -10,16 +10,17 @@
 }
 
 @keyframes grad{
-	0%{background-position: 0px 500px}
-	50%{background-position: 0px -500px}
-	100%{background-position: 0px 500px}
-
+	0%{background-position:0% 0%}
+    	50%{background-position:100% 100%}
+    	100%{background-position:0% 0%}
 }
 
 body{ 
 	/*background-color: #1A4575;*/
-	/*background: repeating-linear-gradient(to bottom, #3158A1, #3F1D91, #3158A1);*/
-	background: repeating-linear-gradient(to bottom, #5CA2C4, #424DCF, #5CA2C4);
+	/*background: repeating-linear-gradient(to bottom, #5CA2C4, #424DCF, #5CA2C4);*/
+	/*background: linear-gradient(270deg, #2ca0cc, #4e51d0, #8352d4);*/
+	background: linear-gradient(235deg, #2c94cc, #8352d4, #4e51d0);
+	background-size: 200% 100%;
 	color: #CCD4FF;
 	text-align: center;
 	animation-name: grad;
@@ -78,12 +79,22 @@ th{
 }
 
 input, select{
-	background-color: rgba(20, 54, 92, 0.2);
+	background-color: rgba(20, 54, 99, 0.4);
 	border: none;
-	color: #94ADE8;
+	color: #A4F5E5;
 	padding: 15px;
 	border-radius: 5px;
 	transition: 0.5s;
+}
+
+input:disabled, select:disabled, input:disabled:hover, select:disabled:hover{
+	color: #94ADE8;
+	background-color: rgba(20, 54, 70, 0.1);
+}
+
+input:hover, select:hover{
+	color: #A4F5E5;
+	background-color: rgba(25, 60, 99, 0.7);
 }
 
 select{
@@ -135,13 +146,6 @@ input[type="submit"]:hover, input[type="button"]:hover{
 
 input[type="text"]{
 	margin-right: 0px;
-}
-
-input:hover, select:hover{
-	/*color: #00FFC7;*/
-	color: #A4F5E5;
-	background-color: rgba(25, 60, 99, 0.7);
-	/*box-shadow: 0px 0px 20px -10px;*/
 }
 
 input:focus{
@@ -239,12 +243,14 @@ header ul.dropdown{
 	right: 0px;
 	top: 64px;
 
-	background-color: rgba(190,180,255, 0.2);
+	background-color: rgba(140,150,220, 0.9);
 	overflow: hidden;
 	width: 200px;
 	padding: 0px;
 	max-height: 0%;
 	transition: 0.5s;
+	border-radius: 0px 0px 5px 5px;
+	margin-right: 10px;
 }
 
 header div.dropdown:hover + ul.dropdown, header ul.dropdown:hover{
@@ -277,6 +283,8 @@ div.jsform{
 div.loading{
 	background-color: rgba(0, 200, 200, 0.2);
 	box-shadow: 0px 0px 50px 0px rgba(255,201,200, 0.3);
+	margin-top: 20px;
+	min-height: 120px;
 }
 
 div.loading *{
@@ -289,6 +297,7 @@ img.loadIcon{
 	position: relative;
 	top: -150px;
 	animation: spin 2s linear infinite;
+	pointer-events: none;
 }
 
 div.loading + img.loadIcon{
@@ -302,24 +311,52 @@ div.loading + img.loadIcon{
 
 div.details{
 	display: inline-block;
+	overflow: hidden;
 	background: rgba(255, 255, 255, 0.5);
 	color: #333333;
-	width: 0px;
-	height: 0px;
+	width: 250px;
+	max-height: 20px;
 	position: absolute;
 	padding: 20px;
-	margin: 5px;
+	margin: 0px;
+	margin-left: -50px;
 	border-radius: 4px;
-	transition: 0.5s;
+	transition: opacity 0.5s, width 0.5s, max-height 0.5s ease-in 0.1s, margin-left 0.5s ease-out;
 	opacity: 0;
+	pointer-events: none;
 }
 
 input[type='button']:hover + div.details{
-	width: 400px;
-	height: 40px;
+	width: 250px;
+	max-height: 200px;
 	opacity: 1;
+	margin-left: 20px;
 }
 
 div.details + br{
-	height: 250px;
+	margin-bottom: 40px;
+}
+
+label.checkbox{
+	background: rgba(0,0,0,0.1);
+	border-radius: 20px;
+	padding: 10px;
+	padding-right: 60px;
+	margin-right: 0px;
+}
+
+input[type='checkbox']{
+	background: rgba(0,0,0,0.2);
+	border-radius: 20px 0px 0px 20px;
+	padding: 10px;
+	margin-left: -40px;
+}
+
+input[type='button'].subtle{
+	float: left;
+	font-size: 18px;
+	border-radius: 24px 5px 5px 24px;
+	padding: 12px;
+	padding-left: 24px;
+	background-color: rgba(200,200,255, 0.1);
 }

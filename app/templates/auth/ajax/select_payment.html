@@ -1,0 +1,4 @@
+{% for option in options %}
+<input type="button" name="{{option['id']}}" value="{{option['name']}}" onclick="request_payment({'page':1, 'id':{{option['id']}} });">
+<div class="details">{{option['details']}}</div><br>
+{% endfor %}

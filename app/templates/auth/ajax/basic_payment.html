@@ -1,0 +1,5 @@
+<input type="button" class="subtle" onclick="request_payment({'page':0});" value="go back">
+<br><br>
+<h2>{{ option['name'] }}</h2>
+<h3>Pay {{ option['iota'] }} iota every {{ option['time'] }} second(s) </h3>
+<input type="button" onclick="request_payment({ 'page':2, 'id':{{option['id']}} });" value="Start Paying">
