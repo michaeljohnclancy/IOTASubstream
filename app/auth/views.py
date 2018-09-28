@@ -3,10 +3,14 @@ from flask_login import login_required, login_user, logout_user, current_user
 from random import SystemRandom
 import uuid
 import threading
+<<<<<<< HEAD
 from werkzeug.security import gen_salt
 from authlib.flask.oauth2 import current_token
 from authlib.specs.rfc6749 import OAuth2Error
 from authlib.common.urls import url_encode
+=======
+import json
+>>>>>>> f069a06810489c68a7198f946f236e90b1ff82a9
 
 #Local
 from . import auth
@@ -73,12 +77,19 @@ def logout():
 @auth.route('/json_login')
 @require_oauth('payment_gate')
 def json_login():
+<<<<<<< HEAD
 	data = [{'id':0, 'name':'Simple Payment', 'details':'Details...'},{'id':1, 'name':'Flash Payments', 'details':'Details n.2'}]
 	return render_template('/auth/json_login.html', title='JSON Login', company_name="Netflix", options=data)
+=======
+
+    return render_template('/auth/json_login.html', title='JSON Login', company_name="Netflix")
+
+>>>>>>> f069a06810489c68a7198f946f236e90b1ff82a9
 
 @auth.route('/AJAX_request', methods=['POST'])
 @require_oauth('payment_gate')
 def ajax_request():
+<<<<<<< HEAD
 	return render_template('/auth/basic_payment.html', title='Basic Payment', iota=1, time=1)
 
 
@@ -140,3 +151,49 @@ def issue_token():
 @auth.route('/auth/revoke', methods=['POST'])
 def revoke_token():
 	return authorization.create_endpoint_response('revocation')
+=======
+    if request.method == 'POST':
+        
+        data = request.get_json()
+        options = [{'id':0, 'type':0, 'name':'Simple Payments', 'iota':1, 'time':1, 'details':'Pay 1 iota per second using normal iota transactions.'},
+                {'id':1, 'type':1, 'name':'Custom Payments', 'details':'Send normal iota transactions at a custom rate.'},
+                {'id':2, 'type':2, 'name':'Flash Payments', 'details':'Use iota flash channels to send transactions that confirm instantly.'}]  #TODO Dictionary should somehow be provided by Netfilx.
+        
+        if data['page']==0: #Select payment type
+            return render_template('/auth/ajax/select_payment.html', title='Select Payment', options=options)
+        if data['page']==1: #Payment confirmation
+            option = options[data['id']]
+            if option['type']==0: #Basic payment
+                page = 'basic_payment.html'
+                title = 'Basic Payment'
+            if option['type']==1: #Custom payment
+                page = 'custom_payment.html'
+                title = 'Custom Payment'
+            if option['type']==2: #Flash payment
+                page = 'flash_payment.html'
+                title = 'Flash Payment'
+            return render_template('/auth/ajax/'+page, title=title, option=option)
+
+        if data['page']==2: #Open payment process
+            return render_template('/auth/ajax/confirm_payment.html', title='Confirm Payment', option=options[data['id']])
+
+        return "Error: Invalid JSON request."
+
+@auth.route('/auth/authorize', methods=['GET', 'POST'])
+@login_required
+@oauth.authorize_handler
+def authorize(*args, **kwargs):
+    if request.method == 'GET':
+        client_id = kwargs.get('client_id')
+        client = Client.query.filter_by(client_id=client_id).first()
+        kwargs['client'] = client
+        return render_template('oauthorize.html', **kwargs)
+
+    confirm = request.form.get('confirm', 'no')
+    return confirm == 'yes'
+
+@auth.route('/auth/token')
+@oauth.token_handler
+def access_token():
+    return None
+>>>>>>> f069a06810489c68a7198f946f236e90b1ff82a9

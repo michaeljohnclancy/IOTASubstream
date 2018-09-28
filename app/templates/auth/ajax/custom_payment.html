@@ -1,0 +1,8 @@
+<input type="button" class="subtle" onclick="request_payment({'page':0});" value="go back">
+
+<label for="custom" class="checkbox">Custom payment interval</label><input type="checkbox" id="custom" onchange="toggleCustom();"><br>
+
+<label for="single" class="checkbox">Single payment:</label><input disabled type="checkbox" id="single" name="single"><br>
+<label for="iota">IOTA</label><input disabled type="number" id="iota" value={{ iota }}><br>
+<label for="time">Time interval</label><input disabled type="number" id="time" value={{ time }}><br>
+<input type="submit" name="submit" value="Start paying">
