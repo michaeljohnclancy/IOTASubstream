@@ -5,12 +5,10 @@ import uuid
 from time import sleep, time
 from iota import *
 
-
-from ..forms import SendIotaForm
-from .. import tasks
 from . import home
-from ..models import Transaction
-from .. import db
+from app.forms import SendIotaForm
+from app.tasks import sendiota
+from app.models import Transaction, db
 
 @home.route('/', methods=['GET', 'POST'])
 def index():
@@ -23,7 +21,7 @@ def index():
 		elif form.si.data=='Mi':
 			_value *= 1e6
 
-		tasks.sendiota(current_user, form.value.data, form.target.data, form.time.data, form.num_payments.data)
+		sendiota(current_user, form.value.data, form.target.data, form.time.data, form.num_payments.data)
 
 		return redirect(url_for('member.yourStats'))
 		

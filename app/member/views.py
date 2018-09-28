@@ -2,10 +2,8 @@ from flask import render_template, flash
 from flask_login import login_required, current_user
 import datetime
 
-from ..models import Transaction
-
 from . import member
-from .. import db
+from app.models import Transaction, db
 
 @member.route('/your_stats', methods=['GET'])
 @login_required

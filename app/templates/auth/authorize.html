@@ -1,0 +1,15 @@
+{% extends "theme.html" %}
+
+{% block form %}
+  <h2>Authorization</h2>
+  <p>Client <strong>{{ client.id }}</strong> is requesting:</p>
+  {% if scopes is defined and grant.scopes %}
+    <ul>
+      <li>Access to public resources.</li>
+    </ul>
+  {% endif %}
+  <form action="" method="post">
+    {{ render_form(form) }}
+    <button class="btn">Authorize</button>
+  </form>
+{% endblock %}

@@ -1,5 +1,3 @@
-
-from models import Transaction
 from iota import *
 from flask_login import current_user
 import threading
@@ -18,6 +16,8 @@ def sendiota(user, value, target, interval, numPayments):
 		tx = ProposedTransaction(address=Address(str(target)), value=int(value), tag=None, message=TryteString.from_string(user.identifier))
 		user.create_api(user.seed).send_transfer(depth=10, transfers=[tx])
 		print(tx)
+
+		from models import Transaction
 
 		transaction = Transaction(transaction_id=str(uuid.uuid4()),
 		identifier=user.identifier,

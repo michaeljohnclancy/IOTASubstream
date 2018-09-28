@@ -1,15 +1,22 @@
 from flask_login import UserMixin, current_user
 from flask_wtf import FlaskForm
+
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+
 from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, Length
-from datetime import datetime, timedelta
 from passlib.context import CryptContext
+from authlib.flask.oauth2.sqla import (
+	OAuth2ClientMixin,
+	OAuth2AuthorizationCodeMixin,
+	OAuth2TokenMixin,
+)
 
+db = SQLAlchemy()
+login_manager = LoginManager()
 
-import tasks
-from app import db
-from . import login_manager, oauth
-
+from tasks import create_api
 
 pwd_context = CryptContext(
 		schemes=["pbkdf2_sha256"],
@@ -31,8 +38,15 @@ class User(UserMixin, db.Model):
 
 	#user_transactions = db.relationship('Transaction', backref='User', lazy='dynamic')
 	
+	#MAY BE NECESSARY FOR AUTHLIB BUT NOT SURE(user loader decorator further down)
+	def get_user_id(self):
+		if self.id:
+			return self.id
+		else:
+			return False
+	
 	def api(self):
-		return tasks.create_api(self.seed)
+		return create_api(self.seed)
 
 	@property
 	def password(self):
@@ -79,4 +93,32 @@ class Transaction(db.Model):
 def load_user(id):
 	return User.query.get(str(id))
 
+class Client(db.Model, OAuth2ClientMixin):
+	__tablename__ = 'oauth2_client'
+
+	id = db.Column(db.Integer, primary_key=True)
+	user_id = db.Column(db.String(128), db.ForeignKey('users.id', ondelete='CASCADE'))
+	user = db.relationship('User')
+
+
+class AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
+	__tablename__ = 'oauth2_code'
+
+	id = db.Column(db.Integer, primary_key=True)
+	user_id = db.Column(
+		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE'))
+	user = db.relationship('User')
+
+
+class Token(db.Model, OAuth2TokenMixin):
+	__tablename__ = 'oauth2_token'
+
+	id = db.Column(db.Integer, primary_key=True)
+	user_id = db.Column(
+		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE'))
+	user = db.relationship('User')
+
+	def is_refresh_token_expired(self):
+		expires_at = self.issued_at + self.expires_in * 2
+		return expires_at < time.time()
 

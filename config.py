@@ -12,17 +12,17 @@ class DevelopmentConfig(Config):
 	Development configurations
 	"""
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
-	DEBUG = True
+	DEBUG = 1
 	SQLALCHEMY_ECHO = True
-	OAUTHLIB_INSECURE_TRANSPORT = True
+	AUTHLIB_INSECURE_TRANSPORT = True
 
 class ProductionConfig(Config):
 	"""
 	Production configurations
+
 	"""
-
-	DEBUG = False
-
+	SQLALCHEMY_TRACK_MODIFICATIONS = False
+	AUTHLIB_INSECURE_TRANSPORT = True
 
 app_config = {
 	'development': DevelopmentConfig,

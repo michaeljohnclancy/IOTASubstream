@@ -25,6 +25,9 @@ class LoginForm(FlaskForm):
 	remember = BooleanField('Remember me')
 	submit = SubmitField("Login")
 
+class SubmitForm(FlaskForm):
+	submit = BooleanField()
+
 class SendIotaForm(FlaskForm):
 	identifier = StringField('id:', validators=[DataRequired(), Length(max=80)])
 	value = IntegerField('Value:', validators=[DataRequired()])
@@ -32,3 +35,5 @@ class SendIotaForm(FlaskForm):
 	target = StringField('Address:', validators=[DataRequired(), Length(min=81, max=81)])
 	num_payments = IntegerField('Numer of payments:', validators=[NumberRange(min=0, max=999)])
 	si = SelectField(u'si', choices=[('i', 'iota'), ('ki', 'kiota'), ('Mi', 'Miota')], validators=[DataRequired()])
+
+
