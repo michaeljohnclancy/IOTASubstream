@@ -1,7 +1,5 @@
 {% extends "theme.html" %}
 
-{% import "bootstrap/wtf.html" as wtf %}
-
 {% block title %}Send Payments{% endblock %}
 
 {% block content %}
@@ -16,11 +14,10 @@
 	{{ wtf.form_field(form.si) }}
 
 	{{ wtf.form_field(form.time) }}
-		<label class="units" for="time">seconds</label> <br>
 	{{ wtf.form_field(form.num_payments) }}
 		<label class="units" for="numPayments"></label> <br>
 	<hr>
-	<div class="center"><input name="submit" type="submit" value="Send Payments"></div>
+	<input name="submit" type="submit" value="Send Payments">
 </form>
 </main>
 {% endblock %}

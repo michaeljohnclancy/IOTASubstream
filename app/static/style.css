@@ -10,32 +10,20 @@
 }
 
 @keyframes grad{
-	0%{background-position:0% 0%}
-    	50%{background-position:100% 100%}
-    	100%{background-position:0% 0%}
+	0%{background-position:0% 50%}
+    	50%{background-position:100% 50%}
+    	100%{background-position:0% 50%}
 }
 
 body{ 
-	/*background-color: #1A4575;*/
-	/*background: repeating-linear-gradient(to bottom, #5CA2C4, #424DCF, #5CA2C4);*/
-	/*background: linear-gradient(270deg, #2ca0cc, #4e51d0, #8352d4);*/
 	background: linear-gradient(235deg, #2c94cc, #8352d4, #4e51d0);
-	background-size: 200% 100%;
+	background-size: 200% 600%;
 	color: #CCD4FF;
 	text-align: center;
 	animation-name: grad;
 	animation-duration: 30s;
 	animation-iteration-count: infinite;
 	margin: 0px;
-}
-
-video#bgvid{
-	z-index: -100;
-	position: fixed;	
-	min-width: 100%;
-	min-height: 100%;
-	transform: translate(-50%, 0);
-	transition: 0s; 
 }
 
 h1{
@@ -57,8 +45,8 @@ a:hover{
 }
 
 table{
+	margin-top: 50px;
 	border-collapse: collapse;
-	border-radius: 10px;
 	/*background-color: rgba(176, 255, 227, 0.5);
 	color: #222222;*/
 	color: #ABDBFF;
@@ -121,12 +109,19 @@ input[type="submit"], input[type="button"]{
 	padding-bottom: 15px;
 	font-size: 24px;
 	cursor: pointer;
+	position: relative;
+	left: 50%;
+	transform: translateX(-50%);
 }
 
 input[type="submit"]:hover, input[type="button"]:hover{
 	color: #9DFFE9;
 	background-color: rgba(0,149,255, 0.9);
 	box-shadow: 0px 0px 20px 10px rgba(0,149,255, 0.4);
+}
+
+div.checkbox{
+	margin-left: 170px;
 }
 
 /*
@@ -176,8 +171,13 @@ form{
 main{
 	width: 800px;	
 	/*background-color: rgba(255,255,255, 0.1);*/
-	padding: 20px;
 	margin: 50px;
+	background-color: rgba(255, 255, 255, 0.15);
+	color: rgb(50,50,50);
+	padding: 50px;
+	padding-left: 0px;
+	padding-right: 0px;
+	border-radius: 20px;
 
 }
 
@@ -197,7 +197,7 @@ header{
 	color: #FFFFFF;
 	padding: 0px;
 	margin: 0px;
-	margin-bottom: 100px;
+	margin-bottom: 50px;
 	text-align: right;
 	height: 82px;
 }
@@ -359,4 +359,13 @@ input[type='button'].subtle{
 	padding: 12px;
 	padding-left: 24px;
 	background-color: rgba(200,200,255, 0.1);
+}
+
+div.alert{
+	background-color: rgba(201, 182, 126, 0.5);
+	width: 50%;
+	margin: auto;
+	height: 100px;
+	line-height: 5.4;
+	border-radius: 10px;
 }

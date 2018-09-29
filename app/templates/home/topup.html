@@ -1,7 +1,6 @@
 {% extends "theme.html" %}
 
-{% import "bootstrap/wtf.html" as wtf %}
-{% import "bootstrap/utils.html" as utils %}
+{% block title %}Topup{% endblock %}
 
 {% block content %}
 
@@ -10,7 +9,9 @@
 <br/>
   {{ utils.flashed_messages() }}
 <br/>
-<h3>Send your IOTA to this address: {{ new_address }}</h3>
+<h3>Send your IOTA to this address:</h3>
+<img src='/get_qr?s={{ new_address }}'>
+{{ new_address }}
 </main>
 
 {% endblock %}
