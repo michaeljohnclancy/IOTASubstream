@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, IntegerField, BooleanField, SelectField, SubmitField, ValidationError
+from wtforms import PasswordField, StringField, IntegerField, BooleanField, SelectField, SubmitField, ValidationError, TextAreaField, SelectMultipleField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange
+from werkzeug.security import gen_salt
 
-from .models import User
+from .models import User, Client, db
 
 class SignupForm(FlaskForm):
 	id = StringField('User id:', validators=[DataRequired()])
@@ -36,4 +37,31 @@ class SendIotaForm(FlaskForm):
 	num_payments = IntegerField('Numer of payments:', validators=[NumberRange(min=0, max=999)])
 	si = SelectField(u'si', choices=[('i', 'iota'), ('ki', 'kiota'), ('Mi', 'Miota')], validators=[DataRequired()])
 
+class ClientForm(FlaskForm):
+	name = StringField(validators=[DataRequired()])
+	scope = StringField()
+	submit = SubmitField("Create Client")
 
+	def update(self, client):
+		client.name = self.name.data
+		client.scope = self.scope.data
+		
+		db.session.add(client)
+
+		db.session.commit()
+		return client
+
+	def save(self, user):
+		client_id = gen_salt(48)
+		client_secret = gen_salt(78)
+
+		client = Client(
+			client_id=client_id,
+			client_secret=client_secret,
+			name=self.name.data,
+			user=user,
+			scope=self.scope.data,
+		)
+		db.session.add(client)
+		db.session.commit()
+		return client

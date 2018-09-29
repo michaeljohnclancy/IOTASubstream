@@ -1,9 +1,7 @@
 from app.models import db, User, AuthorizationCode, Token, Client
 from werkzeug.security import gen_salt
 
-from authlib.specs.rfc6749.grants import (
-	AuthorizationCodeGrant as _AuthorizationCodeGrant,
-	RefreshTokenGrant as _RefreshTokenGrant)
+from authlib.specs.rfc6749 import grants
 
 from authlib.flask.oauth2 import AuthorizationServer, ResourceProtector
 from authlib.flask.oauth2.sqla import (
@@ -15,7 +13,7 @@ from authlib.flask.oauth2.sqla import (
 authorization = AuthorizationServer()
 require_oauth = ResourceProtector()
 
-class AuthorizationCodeGrant(_AuthorizationCodeGrant):
+class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
     def create_authorization_code(self, client, grant_user, request):
         # you can use other method to generate this code
         code = generate_token(48)
@@ -45,7 +43,7 @@ class AuthorizationCodeGrant(_AuthorizationCodeGrant):
 
 
 
-class RefreshTokenGrant(_RefreshTokenGrant):
+class RefreshTokenGrant(grants.RefreshTokenGrant):
 	def authenticate_refresh_token(self, refresh_token):
 		item = Token.query.filter_by(refresh_token=refresh_token).first()
 		if item and not item.is_refresh_token_expired():
