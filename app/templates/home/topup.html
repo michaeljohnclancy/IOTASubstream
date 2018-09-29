@@ -4,14 +4,13 @@
 
 {% block content %}
 
-<h1>{{ self.title() }}</h1>
+<h1 class="title">{{ self.title() }}</h1>
 <main class="center">
-<br/>
-  {{ utils.flashed_messages() }}
-<br/>
-<h3>Send your IOTA to this address:</h3>
+Send your IOTA to this address:<br>
 <img src='/get_qr?s={{ new_address }}'>
-{{ new_address }}
+<br>
+<textarea class="mono gap" style="width: 460px; height: 45px; overflow:hidden;">{{ new_address }}</textarea>
 </main>
+
 
 {% endblock %}

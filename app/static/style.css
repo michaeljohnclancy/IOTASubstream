@@ -1,12 +1,25 @@
 @font-face {
-	/*NOT WORKING*/
 	font-family: 'Roboto';
 	src: url('Roboto-Regular.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'RobotoLight';
+	src: url('Roboto-Light.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'RobotoMono';
+	src: url('RobotoMono-Regular.ttf') format('truetype');
 }
 
 *{
 	font-family: Roboto;
 	font-size: 18px;
+}
+
+*.mono{
+	font-family: 'RobotoMono';
 }
 
 @keyframes grad{
@@ -24,6 +37,7 @@ body{
 	animation-duration: 30s;
 	animation-iteration-count: infinite;
 	margin: 0px;
+	background: rgb(89, 130, 192);
 }
 
 h1{
@@ -53,6 +67,10 @@ table{
 	overflow: hidden;
 }
 
+table, img, *.gap{
+	margin-top: 50px;
+}
+
 td, th{
 	background-color: rgba(17,45,77, 0.5);
 	padding: 30px;
@@ -66,21 +84,22 @@ th{
 	background-color: rgba(17,45,77, 0.6);
 }
 
-input, select{
+input, select, textarea{
 	background-color: rgba(20, 54, 99, 0.4);
 	border: none;
 	color: #A4F5E5;
 	padding: 15px;
 	border-radius: 5px;
 	transition: 0.5s;
+	box-shadow: inset 0px 2px 6px rgba(0,0,0,0.2);
 }
 
-input:disabled, select:disabled, input:disabled:hover, select:disabled:hover{
+input:disabled, select:disabled, textarea:disabled, input:disabled:hover, select:disabled:hover, textarea:disabled:hover{
 	color: #94ADE8;
 	background-color: rgba(20, 54, 70, 0.1);
 }
 
-input:hover, select:hover{
+input:hover, select:hover, textarea:hover{
 	color: #A4F5E5;
 	background-color: rgba(25, 60, 99, 0.7);
 }
@@ -112,6 +131,7 @@ input[type="submit"], input[type="button"]{
 	position: relative;
 	left: 50%;
 	transform: translateX(-50%);
+	box-shadow: 0px 0px 20px 0px rgba(0,149,255, 0);
 }
 
 input[type="submit"]:hover, input[type="button"]:hover{
@@ -178,7 +198,7 @@ main{
 	padding-left: 0px;
 	padding-right: 0px;
 	border-radius: 20px;
-
+	box-shadow: 0px 5px 10px rgba(0,0,0,0.2);
 }
 
 *.center{
@@ -193,13 +213,14 @@ hr{
 }
 
 header{
-	background-color: rgba(17,45,77, 0.6);
+	/*background-color: rgba(17,45,77, 0.6);*/
 	color: #FFFFFF;
 	padding: 0px;
 	margin: 0px;
 	margin-bottom: 50px;
 	text-align: right;
 	height: 82px;
+	/*box-shadow: 0px 5px 10px rgba(0,0,0,0.2);*/
 }
 
 header a{
@@ -209,13 +230,14 @@ header a{
 	margin: 10px;
 	margin-left: 0px;
 	padding: 20px;
+	border-radius: 20px 20px 10px 10px;
 }
 
 header a:hover{
-	background-color: rgba(0,149,255, 0.9);
+	background-color: rgba(0,149,255, 0.6);
 	color: #9DFFE9;
 	box-shadow: 0px 0px 20px 10px rgba(0,149,255, 0.4);
-	border-radius: 5px;
+	border-radius: 10px;
 }
 
 header h1{
@@ -232,9 +254,10 @@ header div.dropdown{
 	margin-bottom: 0px;
 	padding: 20px;
 	padding-bottom: 30px;
-	border-radius: 5px 5px 0px 0px;
+	border-radius: 10px 10px 0px 0px;
 	cursor: default;
 	transition: 0.5s;
+
 }
 
 header ul.dropdown{
@@ -249,12 +272,14 @@ header ul.dropdown{
 	padding: 0px;
 	max-height: 0%;
 	transition: 0.5s;
-	border-radius: 0px 0px 5px 5px;
+	border-radius: 10px 0px 10px 10px;
 	margin-right: 10px;
+	box-shadow: 0px 20px 40px rgba(0,0,0,0.2);
 }
 
 header div.dropdown:hover + ul.dropdown, header ul.dropdown:hover{
 	max-height: 100%;
+	box-shadow: 0px 5px 10px rgba(0,0,0,0.2);
 }
 
 header div.dropdown:hover{
@@ -345,6 +370,35 @@ label.checkbox{
 	margin-right: 0px;
 }
 
+p.help-block{
+	text-align: center;
+	margin-top: -15px;
+	background-color: rgba(255, 174, 83, 0.6);
+	color: rgb(70,70,70);
+	width: 200px;
+	position: relative;
+	left: 50%;
+	transform: translateX(-50%);
+	border-radius: 0px 0px 10px 10px;
+	padding: 5px;
+}
+
+h1.title{
+	background-color: rgba(50,50,50,0.2);
+	width: 710px;
+	position: relative;
+	left: 50%;
+	transform: translateX(-50%);
+	margin: 0px;
+    	margin-bottom: 0px;
+	padding: 20px;
+	border-radius: 20px 20px 0px 0px;
+	margin-bottom: -50px;
+	font-family: "RobotoLight";
+	font-weight: normal;
+	font-size: 80px;
+}
+
 input[type='checkbox']{
 	background: rgba(0,0,0,0.2);
 	border-radius: 20px 0px 0px 20px;
@@ -363,9 +417,11 @@ input[type='button'].subtle{
 
 div.alert{
 	background-color: rgba(201, 182, 126, 0.5);
+	color: rgb(60,60,60);
 	width: 50%;
 	margin: auto;
-	height: 100px;
-	line-height: 5.4;
+	height: 50px;
+	line-height: 3;
 	border-radius: 10px;
+	box-shadow: 0px 5px 10px rgba(0,0,0,0.2);
 }

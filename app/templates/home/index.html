@@ -3,7 +3,7 @@
 {% block title %}Send Payments{% endblock %}
 
 {% block content %}
-<h1>{{ self.title() }}</h1>
+<h1 class="title">{{ self.title() }}</h1>
 <main class="center">
 
 <form method="POST">
@@ -16,7 +16,6 @@
 	{{ wtf.form_field(form.time) }}
 	{{ wtf.form_field(form.num_payments) }}
 		<label class="units" for="numPayments"></label> <br>
-	<hr>
 	<input name="submit" type="submit" value="Send Payments">
 </form>
 </main>
