@@ -115,7 +115,7 @@ def create_client():
 	
 	if form.validate_on_submit():
 		form.save(current_user)
-		return redirect(url_for('home'))
+		return redirect(url_for('home.index'))
 	return render_template('auth/create_client.html', form=form)
 
 @auth.route('/auth/token', methods=['POST'])

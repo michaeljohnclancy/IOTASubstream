@@ -95,7 +95,10 @@ def load_user(id):
 	return User.query.get(str(id))
 
 class Client(db.Model, OAuth2ClientMixin):
+	__tablename__ = 'oauth2_client'
+
 	id = db.Column(db.Integer(), primary_key=True)
+	name = db.Column(db.String(128))
 	user_id = db.Column(
 		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE')
 	)
@@ -108,7 +111,6 @@ class AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
 	user_id = db.Column(
 		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE'))
 	user = db.relationship('User')
-
 
 class Token(db.Model, OAuth2TokenMixin):
 	__tablename__ = 'oauth2_token'

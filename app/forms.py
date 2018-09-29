@@ -39,13 +39,11 @@ class SendIotaForm(FlaskForm):
 
 class ClientForm(FlaskForm):
 	name = StringField(validators=[DataRequired()])
-	redirect_uri = StringField(validators=[DataRequired()])
 	scope = StringField()
 	submit = SubmitField("Create Client")
 
 	def update(self, client):
 		client.name = self.name.data
-		client.redirect_uri = self.redirect_uri.data
 		client.scope = self.scope.data
 		
 		db.session.add(client)
@@ -62,7 +60,6 @@ class ClientForm(FlaskForm):
 			client_secret=client_secret,
 			name=self.name.data,
 			user=user,
-			redirect_uri=self.redirect_uri.data,
 			scope=self.scope.data,
 		)
 		db.session.add(client)
