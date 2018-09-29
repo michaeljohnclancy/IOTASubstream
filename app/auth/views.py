@@ -1,8 +1,9 @@
-from flask import flash, redirect, render_template, url_for, request
+from flask import flash, redirect, render_template, url_for, request, jsonify
 from flask_login import login_required, login_user, logout_user, current_user
 from random import SystemRandom
 import uuid
 import threading
+
 from werkzeug.security import gen_salt
 from authlib.flask.oauth2 import current_token
 from authlib.specs.rfc6749 import OAuth2Error
@@ -11,7 +12,7 @@ import json
 
 #Local
 from . import auth
-from app.forms import LoginForm, SignupForm, SubmitForm
+from app.forms import LoginForm, SignupForm, SubmitForm, ClientForm
 from app.models import User, Transaction, db, Client
 from app.tasks import loop
 from app.oauth2 import require_oauth, authorization
@@ -24,7 +25,7 @@ def signup():
 	if form.validate_on_submit():
 		alphabet = u'9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 		generator = SystemRandom()
-		random_seed = u''.join(generator.choice(alphabet) for _ in range(81))
+		random_seed = u''.join(generator.choice(alphabet) for _ in range(89))
 
 		user = User(id=form.id.data,
 				identifier=str(uuid.uuid4()),
@@ -72,12 +73,10 @@ def logout():
 	return redirect(url_for('auth.login'))
 
 @auth.route('/json_login')
-#@require_oauth('payment_gate')
+@require_oauth('payment_gate')
 def json_login():
 	data = [{'id':0, 'name':'Simple Payment', 'details':'Details...'},{'id':1, 'name':'Flash Payments', 'details':'Details n.2'}]
 	return render_template('/auth/json_login.html', title='JSON Login', company_name="Netflix", options=data)
-
-
 
 @auth.route('/AJAX_request', methods=['POST'])
 @require_oauth('payment_gate')
@@ -87,29 +86,22 @@ def ajax_request():
 
 @auth.route('/auth/authorize', methods=['GET', 'POST'])
 def authorize():
-	if current_user:
-		form = SubmitForm()
-	else:
-		form = LoginForm()
-		
-		user = User.query.filter_by(id=str(form.id.data)).first()
-
-		if user is not None and user.verify_password(form.password.data):
-			login_user(user)
-
-
 	if request.method == 'GET':
 		try:
 			grant = authorization.validate_consent_request(end_user=current_user)
-			
 			return render_template(
-			'auth/authorize.html',
-			#grant=grant,
-			user=current_user,
-			)
+				'auth/login.html',
+				grant=grant,
+				user=current_user,
+				)
 		except OAuth2Error as error:
-			return url_encode(error.get_body())
+			# TODO: add an error page
+			print()
+			payload = dict(error.get_body())
+			return jsonify(payload), error.status_code
+	
 	submitted = request.form['submit']
+	
 	if submitted:
 		# granted by resource owner
 		return authorization.create_authorization_response(current_user)
@@ -119,21 +111,12 @@ def authorize():
 @auth.route('/auth/create_client', methods=('GET', 'POST'))
 @login_required
 def create_client():
-	user = current_user
-	if not user:
-		return redirect('/')
-	if request.method == 'GET':
-		return render_template('auth/create_client.html')
-	client = Client(**request.form.to_dict(flat=True))
-	client.user_id = user.id
-	client.client_id = gen_salt(24)
-	if client.token_endpoint_auth_method == 'none':
-		client.client_secret = ''
-	else:
-		client.client_secret = gen_salt(48)
-	db.session.add(client)
-	db.session.commit()
-	return redirect('/')
+	form = ClientForm()
+	
+	if form.validate_on_submit():
+		form.save(current_user)
+		return redirect(url_for('home'))
+	return render_template('auth/create_client.html', form=form)
 
 @auth.route('/auth/token', methods=['POST'])
 def issue_token():
@@ -143,4 +126,3 @@ def issue_token():
 @auth.route('/auth/revoke', methods=['POST'])
 def revoke_token():
 	return authorization.create_endpoint_response('revocation')
-

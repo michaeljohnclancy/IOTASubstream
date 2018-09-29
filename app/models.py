@@ -77,9 +77,10 @@ class User(UserMixin, db.Model):
 class Transaction(db.Model):
 	__tablename__ = 'transactions'
 
-
 	transaction_id = db.Column(db.String(128), primary_key=True, unique=True)
-	identifier = db.Column(db.String(128))
+	user_id = db.Column(
+		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE')
+	)
 	value = db.Column(db.Integer(), default=0)
 	target = db.Column(db.String(128), nullable=True)
 	timestamp = db.Column(db.Integer(), nullable=False)
@@ -94,12 +95,11 @@ def load_user(id):
 	return User.query.get(str(id))
 
 class Client(db.Model, OAuth2ClientMixin):
-	__tablename__ = 'oauth2_client'
-
-	id = db.Column(db.Integer, primary_key=True)
-	user_id = db.Column(db.String(128), db.ForeignKey('users.id', ondelete='CASCADE'))
+	id = db.Column(db.Integer(), primary_key=True)
+	user_id = db.Column(
+		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE')
+	)
 	user = db.relationship('User')
-
 
 class AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
 	__tablename__ = 'oauth2_code'
