@@ -38,13 +38,21 @@ class SendIotaForm(FlaskForm):
 	si = SelectField(u'si', choices=[('i', 'iota'), ('ki', 'kiota'), ('Mi', 'Miota')], validators=[DataRequired()])
 
 class ClientForm(FlaskForm):
-	name = StringField(validators=[DataRequired()])
+	client_name = StringField("Client Name", validators=[DataRequired()])
+	client_uri = StringField("Client URI", validators=[DataRequired()])
+	redirect_uri = StringField("Redirect URI", validators=[DataRequired()])
+	grant_type = SelectField("Grant Type", choices=[("authorize_code", "Authorize Code")])
+	response_type = SelectField("Response Type", choices=[("code", "Code"), ("token", "Token")])
 	scope = StringField()
 	submit = SubmitField("Create Client")
 
 	def update(self, client):
-		client.name = self.name.data
-		client.scope = self.scope.data
+		client.client_name = self.client_name.data
+		client.client_uri = self.client_uri.data
+		client.redirect_uri = self.redirect_uri.data
+		client.grant_type = self.grant_type.data
+		client.response_type = self.response_type.data
+		client.client_scope = self.scope.data
 		
 		db.session.add(client)
 
@@ -56,11 +64,15 @@ class ClientForm(FlaskForm):
 		client_secret = gen_salt(78)
 
 		client = Client(
-			client_id=client_id,
-			client_secret=client_secret,
-			name=self.name.data,
-			user=user,
-			scope=self.scope.data,
+			client_id = client_id,
+			client_secret = client_secret,
+			client_name = self.client_name.data,
+			client_uri = self.client_uri.data,
+			redirect_uri = self.redirect_uri.data,
+			grant_type = self.grant_type.data,
+			response_type = self.response_type.data,
+			scope = self.scope.data,
+			user = user
 		)
 		db.session.add(client)
 		db.session.commit()

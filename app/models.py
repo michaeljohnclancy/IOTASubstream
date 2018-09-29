@@ -78,12 +78,14 @@ class Transaction(db.Model):
 	__tablename__ = 'transactions'
 
 	transaction_id = db.Column(db.String(128), primary_key=True, unique=True)
-	user_id = db.Column(
-		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE')
+	user_identifier = db.Column(
+		db.String(128), db.ForeignKey('users.identifier', ondelete='CASCADE')
 	)
 	value = db.Column(db.Integer(), default=0)
 	target = db.Column(db.String(128), nullable=True)
 	timestamp = db.Column(db.Integer(), nullable=False)
+
+	user = db.relationship('User')
 
 
 	def __repr__(self):
@@ -98,7 +100,6 @@ class Client(db.Model, OAuth2ClientMixin):
 	__tablename__ = 'oauth2_client'
 
 	id = db.Column(db.Integer(), primary_key=True)
-	name = db.Column(db.String(128))
 	user_id = db.Column(
 		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE')
 	)

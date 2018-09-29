@@ -8,7 +8,7 @@ from app.models import Transaction, db
 @member.route('/your_stats', methods=['GET'])
 @login_required
 def yourStats():
-	user_transactions = db.session.query(Transaction).filter(Transaction.identifier==current_user.identifier).all()
+	user_transactions = db.session.query(Transaction).filter(Transaction.user_identifier==current_user.identifier).all()
 	
 	return render_template('/member/yourstats.html', title="Your Stats", user_transactions=user_transactions, from_datetime=fromDatetime)
 
