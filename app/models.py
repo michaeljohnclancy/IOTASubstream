@@ -25,13 +25,19 @@ pwd_context = CryptContext(
 		)
 
 
+# Set up setters and getters
+@login_manager.user_loader
+def load_user(id):
+	return User.query.get(str(id))
+
+
 class User(UserMixin, db.Model):
 
 
 	__tablename__ = 'users'
 
 	id = db.Column(db.String(128), primary_key=True)
-	identifier = db.Column(db.String(128), unique=True)
+	identifier = db.Column(db.String(128), nullable=False)
 	password_hash = db.Column(db.String(128), nullable=False)
 	email = db.Column(db.String(128), unique=True, nullable=False)
 	seed = db.Column(db.String(128), unique=True, nullable=False)
@@ -91,10 +97,6 @@ class Transaction(db.Model):
 	def __repr__(self):
 		return '<Transaction ID: {}>'.format(self.transaction_id)
 
-# Set up setters and getters
-@login_manager.user_loader
-def load_user(id):
-	return User.query.get(str(id))
 
 class Client(db.Model, OAuth2ClientMixin):
 	__tablename__ = 'oauth2_client'
@@ -108,7 +110,7 @@ class Client(db.Model, OAuth2ClientMixin):
 class AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
 	__tablename__ = 'oauth2_code'
 
-	id = db.Column(db.Integer, primary_key=True)
+	id = db.Column(db.Integer(), primary_key=True)
 	user_id = db.Column(
 		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE'))
 	user = db.relationship('User')

@@ -1,5 +1,6 @@
 from app.models import db, User, AuthorizationCode, Token, Client
 from werkzeug.security import gen_salt
+from flask_login import current_user
 
 from authlib.specs.rfc6749 import grants
 from authlib.common.security import generate_token
@@ -31,19 +32,19 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
 		return code
 
 	def parse_authorization_code(self, code, client):
-		item = AuthorizationCode.query.get(
+		item = AuthorizationCode.query.filter_by(
 			code=code, client_id=client.client_id).first()
-		print("item")
 		if item and not item.is_expired():
-			print("done")
 			return item
+		else:
+			return None
 
 	def delete_authorization_code(self, authorization_code):
 		db.session.delete(authorization_code)
 		db.session.commit()
 
 	def authenticate_user(self, authorization_code):
-		return User.query.get(authorization_code.user_id)
+		return User.query.filter_by(id=authorization_code.user_id)
 
 
 
@@ -54,15 +55,23 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
 			return item
 
 	def authenticate_user(self, credential):
-		return User.query.get(credential.user_id)
+		return User.query.filter_by(id=credential.user_id)
+
+
 
 def query_client(client_id):
 	return Client.query.filter_by(client_id=client_id).first()
 
+
 def save_token(token, request):
+	authCode = AuthorizationCode.query.filter_by(
+			code=request.code, client_id=request.client_id).first()
+
+	user_id = authCode.user_id
+
 	item = Token(
-		client_id=request.client.client_id,
-		user_id=user_id,
+		client_id = request.client_id,
+		user_id = authCode.user_id,
 		**token
 	)
 	db.session.add(item)
