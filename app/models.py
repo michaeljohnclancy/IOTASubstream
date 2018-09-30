@@ -31,7 +31,7 @@ class User(UserMixin, db.Model):
 	__tablename__ = 'users'
 
 	id = db.Column(db.String(128), primary_key=True)
-	identifier = db.Column(db.String(128), unique=True, index=True)
+	identifier = db.Column(db.String(128), unique=True)
 	password_hash = db.Column(db.String(128), nullable=False)
 	email = db.Column(db.String(128), unique=True, nullable=False)
 	seed = db.Column(db.String(128), unique=True, nullable=False)

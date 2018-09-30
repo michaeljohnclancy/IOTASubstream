@@ -31,9 +31,11 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
 		return code
 
 	def parse_authorization_code(self, code, client):
-		item = AuthorizationCode.query.filter_by(
+		item = AuthorizationCode.query.get(
 			code=code, client_id=client.client_id).first()
+		print("item")
 		if item and not item.is_expired():
+			print("done")
 			return item
 
 	def delete_authorization_code(self, authorization_code):
@@ -58,10 +60,6 @@ def query_client(client_id):
 	return Client.query.filter_by(client_id=client_id).first()
 
 def save_token(token, request):
-	if request.user:
-		user_id = request.user.get_user_id()
-	else:
-		user_id = request.client.user_id
 	item = Token(
 		client_id=request.client.client_id,
 		user_id=user_id,

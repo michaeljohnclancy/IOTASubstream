@@ -25,7 +25,7 @@ def signup():
 	if form.validate_on_submit():
 		alphabet = u'9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 		generator = SystemRandom()
-		random_seed = u''.join(generator.choice(alphabet) for _ in range(89))
+		random_seed = u''.join(generator.choice(alphabet) for _ in range(81))
 
 		user = User(id=form.id.data,
 				identifier=str(uuid.uuid4()),
@@ -95,7 +95,7 @@ def authorize():
 			grant_user = current_user
 		else:
 			grant_user = None
-		return authorization.create_authorization_response(grant_user)
+		return authorization.create_authorization_response(grant_user=grant_user)
 	
 	try:
 		if current_user:
@@ -114,7 +114,7 @@ def authorize():
 	)
 
 
-@auth.route('/create_client', methods=('GET', 'POST'))
+@auth.route('/auth/create_client', methods=('GET', 'POST'))
 @login_required
 def create_client():
 	form = ClientForm()
