@@ -1,16 +1,12 @@
 {% extends "theme.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block form %}
+{% block content %}
   <h2>Authorization</h2>
-  <p>Client <strong>{{ client.id }}</strong> is requesting:</p>
-  {% if scopes is defined and grant.scopes %}
-    <ul>
-      <li>Access to public resources.</li>
-    </ul>
-  {% endif %}
-  <form action="auth/authorize" method="post">
-    {{ wtf.quick_form(form) }}
-    <button class="btn">Authorize</button>
-  </form>
+  <p>Client <strong>{{ client.client_name }} </strong> is requesting:</p>
+  <ul>
+    <li>Access to public resources.</li>
+  </ul>
+  {{ form.hidden_tag() }}
+  {{ wtf.quick_form(form) }}
 {% endblock %}

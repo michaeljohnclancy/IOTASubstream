@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
+from flask_login import login_user
 from wtforms import PasswordField, StringField, IntegerField, BooleanField, SelectField, SubmitField, ValidationError, TextAreaField, SelectMultipleField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange
+from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange, StopValidation
 from werkzeug.security import gen_salt
+
 
 from .models import User, Client, db
 
@@ -24,10 +26,31 @@ class LoginForm(FlaskForm):
 	id = StringField('User id:', validators=[DataRequired(), Length(min=6, max=24)])
 	password = PasswordField('Password:', validators=[DataRequired(), Length(min=8, max=80)])
 	remember = BooleanField('Remember me')
-	submit = SubmitField("Login")
+	submit = SubmitField('Login')
 
-class SubmitForm(FlaskForm):
-	submit = BooleanField()
+	def validate_password(self, field):
+		id = str(self.id.data.lower())
+		user = User.query.filter_by(id=id).first()
+		if user is not None and user.verify_password(self.password.data):
+			login_user(user)
+
+
+class LoginConfirmForm(LoginForm):
+	id = StringField('User id:', validators=[DataRequired(), Length(min=6, max=24)])
+	password = PasswordField('Password:', validators=[DataRequired(), Length(min=8, max=80)])
+	confirm = BooleanField()
+	submit = SubmitField('Authorize Payment')
+
+	def validate_password(self, field):
+		user = User.query.filter_by(id=self.id.data).first()
+		if user is not None and user.verify_password(self.password.data):
+			if self.confirm.data:
+				login_user(user)
+
+
+class ConfirmForm(FlaskForm):
+	confirm = BooleanField()
+	submit = SubmitField('Authorize payment')
 
 class SendIotaForm(FlaskForm):
 	identifier = StringField('id:', validators=[DataRequired(), Length(max=80)])

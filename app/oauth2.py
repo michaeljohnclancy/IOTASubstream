@@ -2,6 +2,7 @@ from app.models import db, User, AuthorizationCode, Token, Client
 from werkzeug.security import gen_salt
 
 from authlib.specs.rfc6749 import grants
+from authlib.common.security import generate_token
 
 from authlib.flask.oauth2 import AuthorizationServer, ResourceProtector
 from authlib.flask.oauth2.sqla import (
@@ -53,7 +54,7 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
 		return User.query.get(credential.user_id)
 
 def query_client(client_id):
-	return Client.query.filter_by(id=client_id).first()
+    return Client.query.filter_by(client_id=client_id).first()
 
 def save_token(token, request):
 	if request.user:

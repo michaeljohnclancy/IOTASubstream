@@ -12,10 +12,10 @@ import json
 
 #Local
 from . import auth
-from app.forms import LoginForm, SignupForm, SubmitForm, ClientForm
+from app.forms import LoginForm, SignupForm, ConfirmForm, ClientForm
 from app.models import User, Transaction, db, Client
 from app.tasks import loop
-from app.oauth2 import require_oauth, authorization
+from app.oauth2 import require_oauth, authorization, query_client
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -86,29 +86,35 @@ def ajax_request():
 
 @auth.route('/auth/authorize', methods=['GET', 'POST'])
 def authorize():
-	if request.method == 'GET':
-		try:
-			grant = authorization.validate_consent_request(end_user=current_user)
-			return render_template(
-				'auth/login.html',
-				grant=grant,
-				user=current_user,
-				)
-		except OAuth2Error as error:
-			# TODO: add an error page
-			print()
-			payload = dict(error.get_body())
-			return jsonify(payload), error.status_code
-	
-	submitted = request.form['submit']
-	
-	if submitted:
-		# granted by resource owner
-		return authorization.create_authorization_response(current_user)
-	# denied by resource owner
-	return authorization.create_authorization_response(None)
+	if current_user:
+		form = ConfirmForm()
+	else:
+		form = LoginForm()
 
-@auth.route('/auth/create_client', methods=('GET', 'POST'))
+	if form.validate_on_submit():
+		if form.confirm.data:
+			grant_user = current_user
+		else:
+			grant_user = None
+		return authorization.create_authorization_response(grant_user)
+	
+	try:
+		grant = authorization.validate_consent_request()
+	except OAuth2Error as error:
+		# TODO: add an error page
+		payload = dict(error.get_body())
+		return jsonify(payload), error.status_code
+
+	client = query_client(request.args['client_id'])
+	return render_template(
+		'auth/authorize.html',
+		grant=grant,
+		client=client,
+		form=form,
+	)
+
+
+@auth.route('/create_client', methods=('GET', 'POST'))
 @login_required
 def create_client():
 	form = ClientForm()
