@@ -6,8 +6,9 @@ from authlib.common.security import generate_token
 
 from authlib.flask.oauth2 import AuthorizationServer, ResourceProtector
 from authlib.flask.oauth2.sqla import (
-    create_revocation_endpoint,
-    create_bearer_token_validator,
+	create_revocation_endpoint,
+	create_bearer_token_validator,
+	create_save_token_func
 )
 
 #Definitions
@@ -15,32 +16,32 @@ authorization = AuthorizationServer()
 require_oauth = ResourceProtector()
 
 class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
-    def create_authorization_code(self, client, grant_user, request):
-        # you can use other method to generate this code
-        code = generate_token(48)
-        item = AuthorizationCode(
-            code=code,
-            client_id=client.client_id,
-            redirect_uri=request.redirect_uri,
-            scope=request.scope,
-            user_id=grant_user.get_user_id(),
-        )
-        db.session.add(item)
-        db.session.commit()
-        return code
+	def create_authorization_code(self, client, grant_user, request):
+		# you can use other method to generate this code
+		code = generate_token(48)
+		item = AuthorizationCode(
+			code=code,
+			client_id=client.client_id,
+			redirect_uri=request.redirect_uri,
+			scope=request.scope,
+			user_id=grant_user.get_user_id(),
+		)
+		db.session.add(item)
+		db.session.commit()
+		return code
 
-    def parse_authorization_code(self, code, client):
-        item = AuthorizationCode.query.filter_by(
-            code=code, client_id=client.client_id).first()
-        if item and not item.is_expired():
-            return item
+	def parse_authorization_code(self, code, client):
+		item = AuthorizationCode.query.filter_by(
+			code=code, client_id=client.client_id).first()
+		if item and not item.is_expired():
+			return item
 
-    def delete_authorization_code(self, authorization_code):
-        db.session.delete(authorization_code)
-        db.session.commit()
+	def delete_authorization_code(self, authorization_code):
+		db.session.delete(authorization_code)
+		db.session.commit()
 
-    def authenticate_user(self, authorization_code):
-        return User.query.get(authorization_code.user_id)
+	def authenticate_user(self, authorization_code):
+		return User.query.get(authorization_code.user_id)
 
 
 
@@ -54,13 +55,12 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
 		return User.query.get(credential.user_id)
 
 def query_client(client_id):
-    return Client.query.filter_by(client_id=client_id).first()
+	return Client.query.filter_by(client_id=client_id).first()
 
 def save_token(token, request):
 	if request.user:
 		user_id = request.user.get_user_id()
 	else:
-		# client_credentials grant_type
 		user_id = request.client.user_id
 	item = Token(
 		client_id=request.client.client_id,
@@ -69,7 +69,6 @@ def save_token(token, request):
 	)
 	db.session.add(item)
 	db.session.commit()
-
 
 #Registering grants
 authorization.register_grant(AuthorizationCodeGrant)

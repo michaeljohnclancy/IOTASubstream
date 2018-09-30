@@ -73,7 +73,6 @@ def logout():
 	return redirect(url_for('auth.login'))
 
 @auth.route('/json_login')
-@require_oauth('payment_gate')
 def json_login():
 	data = [{'id':0, 'name':'Simple Payment', 'details':'Details...'},{'id':1, 'name':'Flash Payments', 'details':'Details n.2'}]
 	return render_template('/auth/json_login.html', title='JSON Login', company_name="Netflix", options=data)
@@ -81,7 +80,7 @@ def json_login():
 @auth.route('/AJAX_request', methods=['POST'])
 @require_oauth('payment_gate')
 def ajax_request():
-	return render_template('/auth/basic_payment.html', title='Basic Payment', iota=1, time=1)
+	return render_template('/auth/authorize.html', title='Basic Payment', iota=1, time=1)
 
 
 @auth.route('/auth/authorize', methods=['GET', 'POST'])
@@ -99,7 +98,8 @@ def authorize():
 		return authorization.create_authorization_response(grant_user)
 	
 	try:
-		grant = authorization.validate_consent_request()
+		if current_user:
+			grant = authorization.validate_consent_request(end_user=current_user)
 	except OAuth2Error as error:
 		# TODO: add an error page
 		payload = dict(error.get_body())
@@ -126,7 +126,12 @@ def create_client():
 
 @auth.route('/auth/token', methods=['POST'])
 def issue_token():
-	return authorization.create_token_response()
+	try:
+		return authorization.create_token_response()
+	except OAuth2Error as error:
+		# TODO: add an error page
+		payload = dict(error.get_body())
+		return jsonify(payload), error.status_code
 
 
 @auth.route('/auth/revoke', methods=['POST'])

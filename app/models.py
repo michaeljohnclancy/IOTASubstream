@@ -30,7 +30,7 @@ class User(UserMixin, db.Model):
 
 	__tablename__ = 'users'
 
-	id = db.Column(db.String(128), unique=True, primary_key=True)
+	id = db.Column(db.String(128), primary_key=True)
 	identifier = db.Column(db.String(128), unique=True, index=True)
 	password_hash = db.Column(db.String(128), nullable=False)
 	email = db.Column(db.String(128), unique=True, nullable=False)
@@ -116,7 +116,7 @@ class AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
 class Token(db.Model, OAuth2TokenMixin):
 	__tablename__ = 'oauth2_token'
 
-	id = db.Column(db.Integer, primary_key=True)
+	id = db.Column(db.Integer(), primary_key=True)
 	user_id = db.Column(
 		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE'))
 	user = db.relationship('User')
