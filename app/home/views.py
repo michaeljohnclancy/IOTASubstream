@@ -5,6 +5,7 @@ import threading
 import uuid
 from time import sleep, time
 from iota import *
+import os
 
 from . import home
 from app.forms import SendIotaForm
@@ -27,23 +28,25 @@ def index():
 
 		sendiota(current_user, form.value.data, form.target.data, form.time.data, form.num_payments.data)
 
-		return redirect(url_for('member.yourStats'))
-		
 
-	return render_template('/home/index.html', form=form)
+		return redirect(url_for('member.yourStats'))
+
+	companies = os.listdir("app/static/banners")
+
+	return render_template('/home/home.html', form=form, companies=companies)
 
 
 @home.route('/topup', methods=['GET', 'POST'])
 def topupAccount():
 
-	newAddress = str(current_user.api().get_new_addresses(count=1)['addresses'][0])
+	newAddress = str(current_user.api().get_new_addresses()['addresses'][0])
 	return render_template('/home/topup.html', new_address = newAddress)
 
 
 @home.route('/signup_success', methods=['GET'])
 def signup_success():
 
-	
+
 	return render_template('/home/signup_success.html', title="Signup Success")
 
 def random_qr(s):
