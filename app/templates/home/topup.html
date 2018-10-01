@@ -7,10 +7,23 @@
 <h1 class="title">{{ self.title() }}</h1>
 <main class="center">
 Send your IOTA to this address:<br>
-<img src='/get_qr?s={{ new_address }}'>
+<img style="border-radius: 40px;" src="/get_qr?s={{ new_address }}">
 <br>
-<textarea class="mono gap" style="width: 460px; height: 45px; overflow:hidden;">{{ new_address }}</textarea>
+<textarea class="mono gap" id="addr" style="width: 380px; height: 70px; overflow:hidden; resize:none; border-radius: 20px; margin-top: 6px;" readonly>{{ new_address }}</textarea>
 </main>
+
+<script type="text/javascript">
+	var box = document.getElementById("addr");
+	
+	box.onfocus = function() {
+		box.select();
+		box.onmouseup = function() {
+			box.onmouseup = null;
+			return false;
+		}
+	}
+
+</script>
 
 
 {% endblock %}
