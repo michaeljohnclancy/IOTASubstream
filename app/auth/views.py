@@ -65,21 +65,28 @@ def ajax_request():
 
 @auth.route('/auth/authorize', methods=['GET', 'POST'])
 def authorize():
-	if current_user:
+	if current_user.is_authenticated:
 		form = ConfirmForm()
 	else:
 		form = LoginForm()
 
 	if form.validate_on_submit():
-		if form.confirm.data:
-			grant_user = current_user
+		if current_user.is_authenticated:
+			if form.confirm.data:
+				grant_user = current_user
+			else:
+				grant_user = None
 		else:
-			grant_user = None
+			form.login()
+			if current_user.is_authenticated:
+				grant_user = current_user
+			else:
+				grant_user = None
+		
 		return authorization.create_authorization_response(grant_user=grant_user)
 	
 	try:
-		if current_user:
-			grant = authorization.validate_consent_request(end_user=current_user)
+		grant = authorization.validate_consent_request(end_user=current_user)
 	except OAuth2Error as error:
 		# TODO: add an error page
 		payload = dict(error.get_body())

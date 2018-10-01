@@ -14,7 +14,7 @@ class UserForm(FlaskForm):
 	username = StringField('User id:', validators=[DataRequired()])
 	email = StringField('Email:', validators=[Email(message='Invalid Email')])
 	password = PasswordField('Password:', validators=[DataRequired(), Length(min=8, max=80), EqualTo('confirm')])
-	confirm = PasswordField('Confirm password:')
+	confirm_pass = PasswordField('Confirm password:')
 	submit = SubmitField("Signup")
 
 	def validate_email(self, field):
@@ -91,8 +91,8 @@ class ClientForm(FlaskForm):
 	client_name = StringField("Client Name", validators=[DataRequired()])
 	client_uri = StringField("Client URI", validators=[DataRequired()])
 	redirect_uri = StringField("Redirect URI", validators=[DataRequired()])
-	grant_type = SelectField("Grant Type", choices=[("authorize_code", "Authorize Code")])
-	response_type = SelectField("Response Type", choices=[("code", "Code"), ("token", "Token")])
+	grant_type = SelectField("Grant Type", choices=[("authorization_code", "Authorization Code")])
+	response_type = SelectField("Response Type", choices=[("code", "Code")])
 	scope = StringField()
 	submit = SubmitField("Create Client")
 
