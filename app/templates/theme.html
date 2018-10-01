@@ -17,7 +17,7 @@
 
 		<a href="{{ url_for('home.index') }}">Home</a>
 
-		<div class="dropdown">Balance: {{ sum(current_user.api().get_balances['balances']) }}</div>
+		<div class="dropdown">Balance: {{ sum(current_user.iota_api().get_balances['balances']) }}</div>
 		<ul class="dropdown">
 			<li><a href="{{ url_for('home.topupAccount') }}">Top up</a></li>
 			<li><a href="{{ url_for('member.yourStats') }}">Your stats</a></li>
