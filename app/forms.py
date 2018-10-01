@@ -63,13 +63,12 @@ class ConfirmForm(FlaskForm):
 	confirm = BooleanField()
 	submit = SubmitField("Authorize payment")
 
-class SendIotaForm(FlaskForm):
+class IotaPaymentForm(FlaskForm):
 	identifier = StringField('id:', validators=[DataRequired(), Length(max=80)])
 	value = IntegerField('Value:', validators=[DataRequired()])
-	time = IntegerField('Time:', validators=[DataRequired()])
 	target = StringField('Address:', validators=[DataRequired(), Length(min=81, max=81)])
-	num_payments = IntegerField('Numer of payments:', validators=[NumberRange(min=0, max=999)])
 	si = SelectField(u'si', choices=[('i', 'iota'), ('ki', 'kiota'), ('Mi', 'Miota')], validators=[DataRequired()])
+	submit = SubmitField("Send Payment")
 
 	def send_payment(self):
 		_value = self.value.data
@@ -83,8 +82,20 @@ class SendIotaForm(FlaskForm):
 			tag=None,
 			message=TryteString.from_string(self.identifier.data))
 		
+		#Need to add error handling
 		user = User.query.filter_by(identifier=self.identifier.data)
 		user.iota_api.send_transfer(depth=10, transfers=[tx])
+
+		transaction = Transaction(transaction_id=str(uuid.uuid4()),
+			identifier=self.identifier.data,
+			value=_value,
+			target=self.target.data,
+			timestamp=tx.timestamp)
+
+		db.session.add(transaction)
+		db.session.commit()
+
+		return transaction
 
 
 class ClientForm(FlaskForm):

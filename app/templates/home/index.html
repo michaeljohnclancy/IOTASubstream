@@ -5,15 +5,14 @@
 {% block content %}
 <h1 class="title">{{ self.title() }}</h1>
 <main class="center">
-
-<form method="POST">
+ <form method="POST">
 	{{ form.hidden_tag() }}
 	{{ wtf.form_field(form.identifier, value=current_user.identifier) }} 
 	{{ wtf.form_field(form.target) }}
 	{{ wtf.form_field(form.value) }}
 	{{ wtf.form_field(form.si) }}
 		<label class="units" for="numPayments"></label> <br>
-	<input name="submit" type="submit" value="Send Payments">
-</form>
+	{{ wtf.form_field(form.submit) }}
+ </form>
 </main>
 {% endblock %}

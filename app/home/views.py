@@ -7,7 +7,7 @@ from time import sleep, time
 from iota import *
 
 from . import home
-from app.forms import SendIotaForm
+from app.forms import IotaPaymentForm
 from app.models import Transaction, db
 
 import qrcode
@@ -15,7 +15,7 @@ import cStringIO
 
 @home.route('/', methods=['GET', 'POST'])
 def index():
-	form = SendIotaForm()
+	form = IotaPaymentForm()
 
 	if form.validate_on_submit():
 

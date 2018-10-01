@@ -3,6 +3,7 @@ from flask_login import current_user
 import threading
 from flask import jsonify, current_app
 
+
 """def loop(seed):  #Continuously checks the IOTA network for new payments:
 	ms = get_bundles(seed)
 	n = len(ms)

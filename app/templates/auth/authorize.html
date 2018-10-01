@@ -1,11 +1,16 @@
 {% extends "theme.html" %}
 
+{% block title %}New Subscription{% endblock %}
+
 {% block content %}
-  <h2>Authorization</h2>
+<h1 class="title">{{ self.title() }}</h1>
+<main class="center">
   <p>Client <strong>{{ client.client_name }} </strong> is requesting:</p>
   <ul>
     <li>Access to public resources.</li>
   </ul>
   {{ form.hidden_tag() }}
   {{ wtf.quick_form(form) }}
+ </main>
 {% endblock %}
+
