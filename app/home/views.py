@@ -9,7 +9,6 @@ import os
 
 from . import home
 from app.forms import SendIotaForm
-from app.tasks import sendiota
 from app.models import Transaction, db
 
 import qrcode
@@ -21,12 +20,7 @@ def index():
 
 	if form.validate_on_submit():
 
-		if form.si.data=='ki':
-			_value *= 1e3
-		elif form.si.data=='Mi':
-			_value *= 1e6
-
-		sendiota(current_user, form.value.data, form.target.data, form.time.data, form.num_payments.data)
+		form.send_payment()
 
 
 		return redirect(url_for('member.yourStats'))
@@ -39,14 +33,12 @@ def index():
 @home.route('/topup', methods=['GET', 'POST'])
 def topupAccount():
 
-	newAddress = str(current_user.api().get_new_addresses()['addresses'][0])
+	newAddress = str(current_user.api().get_new_addresses(count=1)['addresses'][0])
 	return render_template('/home/topup.html', new_address = newAddress)
 
 
 @home.route('/signup_success', methods=['GET'])
 def signup_success():
-
-
 	return render_template('/home/signup_success.html', title="Signup Success")
 
 def random_qr(s):

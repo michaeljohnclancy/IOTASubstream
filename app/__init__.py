@@ -43,5 +43,8 @@ def create_app(config_name):
 	from .member import member as member_blueprint
 	app.register_blueprint(member_blueprint)
 
+	from .payments import payments as payments_blueprint
+	app.register_blueprint(member_blueprint)
+
 
 	return app

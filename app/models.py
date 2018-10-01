@@ -13,10 +13,10 @@ from authlib.flask.oauth2.sqla import (
 	OAuth2TokenMixin,
 )
 
+from iota import Iota
+
 db = SQLAlchemy()
 login_manager = LoginManager()
-
-from tasks import create_api
 
 pwd_context = CryptContext(
 		schemes=["pbkdf2_sha256"],
@@ -33,26 +33,24 @@ def load_user(id):
 
 class User(UserMixin, db.Model):
 
-
 	__tablename__ = 'users'
 
-	id = db.Column(db.String(128), primary_key=True)
-	identifier = db.Column(db.String(128), nullable=False)
+	id = db.Column(db.Integer(), primary_key=True, index=True)
+	username = db.Column(db.String(128), nullable=False, unique=True)
+	identifier = db.Column(db.String(128), nullable=False, unique=True)
 	password_hash = db.Column(db.String(128), nullable=False)
 	email = db.Column(db.String(128), unique=True, nullable=False)
 	seed = db.Column(db.String(128), unique=True, nullable=False)
 
-	#user_transactions = db.relationship('Transaction', backref='User', lazy='dynamic')
-	
+	def iota_api(self):
+		return Iota("http://node02.iotatoken.nl:14265", self.seed)
+
 	#MAY BE NECESSARY FOR AUTHLIB BUT NOT SURE(user loader decorator further down)
 	def get_user_id(self):
 		if self.id:
 			return self.id
 		else:
 			return False
-	
-	def api(self):
-		return create_api(self.seed)
 
 	@property
 	def password(self):
@@ -75,8 +73,6 @@ class User(UserMixin, db.Model):
 		"""
 		return pwd_context.verify(password, self.password_hash)
 
-
-
 	def __repr__(self):
 		return '<User: {}>'.format(self.id)
 
@@ -93,26 +89,25 @@ class Transaction(db.Model):
 
 	user = db.relationship('User')
 
-
 	def __repr__(self):
 		return '<Transaction ID: {}>'.format(self.transaction_id)
-
 
 class Client(db.Model, OAuth2ClientMixin):
 	__tablename__ = 'oauth2_client'
 
 	id = db.Column(db.Integer(), primary_key=True)
 	user_id = db.Column(
-		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE')
+		db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE')
 	)
 	user = db.relationship('User')
+
 
 class AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
 	__tablename__ = 'oauth2_code'
 
 	id = db.Column(db.Integer(), primary_key=True)
 	user_id = db.Column(
-		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE'))
+		db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
 	user = db.relationship('User')
 
 class Token(db.Model, OAuth2TokenMixin):
@@ -120,7 +115,8 @@ class Token(db.Model, OAuth2TokenMixin):
 
 	id = db.Column(db.Integer(), primary_key=True)
 	user_id = db.Column(
-		db.String(128), db.ForeignKey('users.id', ondelete='CASCADE'))
+		db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE')) 
+
 	user = db.relationship('User')
 
 	def is_refresh_token_expired(self):

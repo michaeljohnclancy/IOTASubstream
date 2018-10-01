@@ -1,7 +1,6 @@
 from flask import flash, redirect, render_template, url_for, request, jsonify
-from flask_login import login_required, login_user, logout_user, current_user
-from random import SystemRandom
-import uuid
+from flask_login import login_required, logout_user, current_user
+
 import threading
 
 from werkzeug.security import gen_salt
@@ -12,56 +11,38 @@ import json
 
 #Local
 from . import auth
-from app.forms import LoginForm, SignupForm, ConfirmForm, ClientForm
+from app.forms import LoginForm, UserForm, ConfirmForm, ClientForm
 from app.models import User, Transaction, db, Client
-from app.tasks import loop
-from app.oauth2 import require_oauth, authorization, query_client
+from app.oauth2 import authorization, query_client
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
+	if current_user.is_authenticated:
+		return redirect(url_for('home.index'))
+	userForm = UserForm()
 
-	form = SignupForm()
-
-	if form.validate_on_submit():
-		alphabet = u'9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-		generator = SystemRandom()
-		random_seed = u''.join(generator.choice(alphabet) for _ in range(81))
-
-		user = User(id=form.id.data,
-				identifier=str(uuid.uuid4()),
-				password=form.password.data,
-				email=form.email.data,
-				seed=random_seed
-				)
-
-		db.session.add(user)
-		db.session.commit()
+	if userForm.validate_on_submit():
+		
+		userForm.save()
 
 		return redirect(url_for('auth.login'))
 
-
-	return render_template('/auth/signup.html', form=form, title='Register')
+	return render_template('/auth/signup.html', form=userForm, title='Register')
 
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+	if current_user.is_authenticated:
+		return redirect(url_for('home.index'))
+	loginForm = LoginForm()
 
-	form = LoginForm()
+	if loginForm.validate_on_submit():
 
-	if form.validate_on_submit():
+		loginForm.login()
 
-		user = User.query.filter_by(id=str(form.id.data)).first()
+		return redirect(url_for('home.index'))
 
-		if user is not None and user.verify_password(form.password.data):
-			login_user(user)
-
-
-			return redirect(url_for('home.index'))
-
-		else:
-			flash('Invalid email or password.')
-
-	return render_template('/auth/login.html', form=form, title='Login')
+	return render_template('/auth/login.html', form=loginForm, title='Login')
 
 @auth.route('/logout')
 @login_required
@@ -78,28 +59,34 @@ def json_login():
 	return render_template('/auth/json_login.html', title='JSON Login', company_name="Netflix", options=data)
 
 @auth.route('/AJAX_request', methods=['POST'])
-@require_oauth('payment_gate')
 def ajax_request():
 	return render_template('/auth/authorize.html', title='Basic Payment', iota=1, time=1)
 
 
 @auth.route('/auth/authorize', methods=['GET', 'POST'])
 def authorize():
-	if current_user:
+	if current_user.is_authenticated:
 		form = ConfirmForm()
 	else:
 		form = LoginForm()
 
 	if form.validate_on_submit():
-		if form.confirm.data:
-			grant_user = current_user
+		if current_user.is_authenticated:
+			if form.confirm.data:
+				grant_user = current_user
+			else:
+				grant_user = None
 		else:
-			grant_user = None
+			form.login()
+			if current_user.is_authenticated:
+				grant_user = current_user
+			else:
+				grant_user = None
+		
 		return authorization.create_authorization_response(grant_user=grant_user)
 	
 	try:
-		if current_user:
-			grant = authorization.validate_consent_request(end_user=current_user)
+		grant = authorization.validate_consent_request(end_user=current_user)
 	except OAuth2Error as error:
 		# TODO: add an error page
 		payload = dict(error.get_body())

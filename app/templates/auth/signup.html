@@ -9,12 +9,7 @@
 <h1>{{ self.title() }}</h1>
 <form method="POST" action="/signup">
 	{{ form.hidden_tag() }}
-	{{ wtf.form_field(form.id)}}
-	{{ wtf.form_field(form.email)}}
-	{{ wtf.form_field(form.password)}}
-	{{ wtf.form_field(form.confirm)}}
-
-	<input name="submit" type="submit" value="Signup">
+	{{ wtf.quick_form(form) }}
 </form>
 </main>
 {% endblock %}
