@@ -13,7 +13,7 @@ from .models import User, Client, db
 class UserForm(FlaskForm):
 	username = StringField('User id:', validators=[DataRequired()])
 	email = StringField('Email:', validators=[Email(message='Invalid Email')])
-	password = PasswordField('Password:', validators=[DataRequired(), Length(min=8, max=80), EqualTo('confirm')])
+	password = PasswordField('Password:', validators=[DataRequired(), Length(min=8, max=80), EqualTo('confirm_pass')])
 	confirm_pass = PasswordField('Confirm password:')
 	submit = SubmitField("Signup")
 
@@ -29,7 +29,7 @@ class UserForm(FlaskForm):
 		alphabet = u'9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 		generator = SystemRandom()
 		random_seed = u''.join(generator.choice(alphabet) for _ in range(81))
-		
+
 		self.validate_email(self.email)
 		self.validate_username(self.username)
 
@@ -82,7 +82,7 @@ class SendIotaForm(FlaskForm):
 			value=int(_value),
 			tag=None,
 			message=TryteString.from_string(self.identifier.data))
-		
+
 		user = User.query.filter_by(identifier=self.identifier.data)
 		user.iota_api.send_transfer(depth=10, transfers=[tx])
 
@@ -103,7 +103,7 @@ class ClientForm(FlaskForm):
 		client.grant_type = self.grant_type.data
 		client.response_type = self.response_type.data
 		client.client_scope = self.scope.data
-		
+
 		db.session.add(client)
 
 		db.session.commit()
