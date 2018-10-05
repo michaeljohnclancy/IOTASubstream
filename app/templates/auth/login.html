@@ -5,9 +5,7 @@
 {% block content %}
 <h1 class="title">{{ self.title() }}</h1>
 <main class="center">
-<div class="center">
 {{ form.hidden_tag() }}
 {{ wtf.quick_form(form) }}
-</div>
 </main>
 {% endblock %}

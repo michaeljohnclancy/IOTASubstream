@@ -22,7 +22,6 @@ def index():
 
 		form.send_payment()
 
-
 		return redirect(url_for('member.yourStats'))
 
 	companies = os.listdir("app/static/banners")
@@ -33,7 +32,7 @@ def index():
 @home.route('/topup', methods=['GET', 'POST'])
 def topupAccount():
 
-	newAddress = str(current_user.api().get_new_addresses(count=1)['addresses'][0])
+	newAddress = str(current_user.iota_api().get_new_addresses(count=1)['addresses'][0])
 	return render_template('/home/topup.html', new_address = newAddress)
 
 

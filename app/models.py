@@ -24,12 +24,10 @@ pwd_context = CryptContext(
 		pbkdf2_sha256__default_rounds=30000
 		)
 
-
 # Set up setters and getters
 @login_manager.user_loader
 def load_user(id):
 	return User.query.get(str(id))
-
 
 class User(UserMixin, db.Model):
 
@@ -41,6 +39,9 @@ class User(UserMixin, db.Model):
 	password_hash = db.Column(db.String(128), nullable=False)
 	email = db.Column(db.String(128), unique=True, nullable=False)
 	seed = db.Column(db.String(128), unique=True, nullable=False)
+
+	active_agreements = db.relationship('PaymentAgreement', backref='user', lazy=True)
+	transactions = db.relationship('Transaction', backref='user', lazy=True)
 
 	def iota_api(self):
 		return Iota("http://node02.iotatoken.nl:14265", self.seed)
@@ -79,7 +80,7 @@ class User(UserMixin, db.Model):
 class Transaction(db.Model):
 	__tablename__ = 'transactions'
 
-	transaction_id = db.Column(db.String(128), primary_key=True, unique=True)
+	transaction_id = db.Column(db.String(128), primary_key=True)
 	user_identifier = db.Column(
 		db.String(128), db.ForeignKey('users.identifier', ondelete='CASCADE')
 	)
@@ -87,10 +88,29 @@ class Transaction(db.Model):
 	target = db.Column(db.String(128), nullable=True)
 	timestamp = db.Column(db.Integer(), nullable=False)
 
-	user = db.relationship('User')
-
 	def __repr__(self):
 		return '<Transaction ID: {}>'.format(self.transaction_id)
+
+class PaymentAgreement(db.Model):
+	__tablename__ = "payment_agreement"
+
+	id = db.Column(db.Integer(), primary_key=True)
+	payment_address = db.Column(db.String(128))
+	payment_amount = db.Column(db.Integer(), default=0)
+	payment_time = db.Column(db.Integer(), default=0)
+	user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
+	client_id = db.Column(db.String(128), db.ForeignKey('oauth2_client.client_id'))
+
+	def set_address(self, new_address):
+		self.payment_address = new_address
+
+	def is_valid_session(self):
+		token = Token.query.filter_by(user_id=self.user_id, client_id=self.client_id).first()
+		
+		if not token or token.is_revoked:
+			return False
+		else:
+			return True
 
 class Client(db.Model, OAuth2ClientMixin):
 	__tablename__ = 'oauth2_client'
@@ -99,6 +119,7 @@ class Client(db.Model, OAuth2ClientMixin):
 	user_id = db.Column(
 		db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE')
 	)
+	
 	user = db.relationship('User')
 
 
@@ -108,6 +129,7 @@ class AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
 	id = db.Column(db.Integer(), primary_key=True)
 	user_id = db.Column(
 		db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
+	
 	user = db.relationship('User')
 
 class Token(db.Model, OAuth2TokenMixin):
@@ -115,9 +137,10 @@ class Token(db.Model, OAuth2TokenMixin):
 
 	id = db.Column(db.Integer(), primary_key=True)
 	user_id = db.Column(
-		db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE')) 
+		db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
+	client_id = db.Column(
+		db.Integer(), db.ForeignKey('oauth2_client.id', ondelete='CASCADE'))
 
-	user = db.relationship('User')
 
 	def is_refresh_token_expired(self):
 		expires_at = self.issued_at + self.expires_in * 2

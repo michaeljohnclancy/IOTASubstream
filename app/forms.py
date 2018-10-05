@@ -13,7 +13,7 @@ from .models import User, Client, db
 class UserForm(FlaskForm):
 	username = StringField('User id:', validators=[DataRequired()])
 	email = StringField('Email:', validators=[Email(message='Invalid Email')])
-	password = PasswordField('Password:', validators=[DataRequired(), Length(min=8, max=80), EqualTo('confirm')])
+	password = PasswordField('Password:', validators=[DataRequired(), Length(min=8, max=80), EqualTo('confirm_pass')])
 	confirm_pass = PasswordField('Confirm password:')
 	submit = SubmitField("Signup")
 
@@ -56,12 +56,14 @@ class LoginForm(FlaskForm):
 
 		if user is not None and user.verify_password(self.password.data):
 			login_user(user)
+			return user
 		else:
 			flash("Username or password is invalid!")
+			return None
 
 class ConfirmForm(FlaskForm):
 	confirm = BooleanField()
-	submit = SubmitField("Authorize payment")
+	submit = SubmitField("Authorize Payment")
 
 class IotaPaymentForm(FlaskForm):
 	identifier = StringField('id:', validators=[DataRequired(), Length(max=80)])
@@ -82,7 +84,7 @@ class IotaPaymentForm(FlaskForm):
 			tag=None,
 			message=TryteString.from_string(self.identifier.data))
 		
-		#Need to add error handling
+		#TODO Need to add error handling
 		user = User.query.filter_by(identifier=self.identifier.data)
 		user.iota_api.send_transfer(depth=10, transfers=[tx])
 
@@ -107,6 +109,7 @@ class ClientForm(FlaskForm):
 	scope = StringField()
 	submit = SubmitField("Create Client")
 
+
 	def update(self, client):
 		client.client_name = self.client_name.data
 		client.client_uri = self.client_uri.data
@@ -116,7 +119,6 @@ class ClientForm(FlaskForm):
 		client.client_scope = self.scope.data
 		
 		db.session.add(client)
-
 		db.session.commit()
 		return client
 

@@ -5,10 +5,9 @@
 {% block content %}
 <h1 class="title">{{ self.title() }}</h1>
 <main class="center">
-  <p>Client <strong>{{ client.client_name }} </strong> is requesting:</p>
-  <ul>
-    <li>Access to public resources.</li>
-  </ul>
+  <p>Client <strong>{{ client.client_name }} </strong> would like to initiate a new subscription:</p>
+ 
+  <p> Offer: <strong> {{ payment_amount }} </strong> iota every <strong>{{ payment_time }} </strong> seconds.</p>
   {{ form.hidden_tag() }}
   {{ wtf.quick_form(form) }}
  </main>

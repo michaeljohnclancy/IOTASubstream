@@ -26,7 +26,7 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
 			redirect_uri=request.redirect_uri,
 			scope=request.scope,
 			user_id=grant_user.get_user_id(),
-		)
+			)
 		db.session.add(item)
 		db.session.commit()
 		return code
@@ -57,17 +57,12 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
 	def authenticate_user(self, credential):
 		return User.query.filter_by(id=credential.user_id)
 
-
-
 def query_client(client_id):
 	return Client.query.filter_by(client_id=client_id).first()
-
 
 def save_token(token, request):
 	authCode = AuthorizationCode.query.filter_by(
 			code=request.code, client_id=request.client_id).first()
-
-	user_id = authCode.user_id
 
 	item = Token(
 		client_id = request.client_id,
