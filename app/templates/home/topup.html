@@ -4,8 +4,8 @@
 
 {% block content %}
 
-<h1 class="title">{{ self.title() }}</h1>
 <main class="center">
+<h1 class="title">{{ self.title() }}</h1>
 Send your IOTA to this address:<br>
 <img style="border-radius: 40px;" src="/get_qr?s={{ new_address }}">
 <br>
@@ -14,7 +14,7 @@ Send your IOTA to this address:<br>
 
 <script type="text/javascript">
 	var box = document.getElementById("addr");
-	
+
 	box.onfocus = function() {
 		box.select();
 		box.onmouseup = function() {

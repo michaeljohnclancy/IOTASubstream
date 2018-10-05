@@ -3,10 +3,11 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1 class="title">{{ self.title() }}</h1>
 
 <main class="center">
+<h1 class="title">{{ self.title() }}</h1>
 
+<div>
 {% for company in companies %}
 <div class="subscription">
   <div class="play_btn">
@@ -15,11 +16,12 @@
   <span>500 iota per minute</span>
 </div>
 {% endfor %}
+</div>
 
 </main>
 
-<h1 class="title">Popular</h1>
 <main class="center">
+<h1 class="title">Popular</h1>
 {% for company in companies %}
 <img src="{{ url_for('static', filename='banners/'+company) }}">
 {% endfor %}

@@ -29,7 +29,7 @@ class UserForm(FlaskForm):
 		alphabet = u'9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 		generator = SystemRandom()
 		random_seed = u''.join(generator.choice(alphabet) for _ in range(81))
-		
+
 		self.validate_email(self.email)
 		self.validate_username(self.username)
 
@@ -117,7 +117,7 @@ class ClientForm(FlaskForm):
 		client.grant_type = self.grant_type.data
 		client.response_type = self.response_type.data
 		client.client_scope = self.scope.data
-		
+
 		db.session.add(client)
 		db.session.commit()
 		return client
