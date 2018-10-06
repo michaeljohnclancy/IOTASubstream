@@ -10,16 +10,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=0.6">
 	<meta name="theme-color" content="#5982C0">
 </head>
-<body>
 
+<body>
 <header>
 <nav>
-<h1>IOTA Subs</h1>
+<a class="title" href="{{ url_for('home.index') }}">IOTA Subs</a>
 {% if current_user.is_authenticated %}
 
 		<a href="{{ url_for('home.index') }}">Home</a>
 
-		<div class="dropdown">Balance: {{ sum(current_user.iota_api().get_balances['balances']) }}</div>
+		<a class="dropdown" onclick="toggle_menu();">Balance: {{ sum(current_user.iota_api().get_balances['balances']) }}</a>
 		<ul class="dropdown">
 			<li><a href="{{ url_for('home.topupAccount') }}">Top up</a></li>
 			<li><a href="{{ url_for('member.yourStats') }}">Your stats</a></li>
@@ -37,6 +37,23 @@
 
 {% block content %}
 {% endblock %}
+
+<script type="text/javascript">
+var menu_active = false;
+var menu_items = document.getElementsByClassName("dropdown")
+
+function toggle_menu(){
+	menu_active = !menu_active;
+	for(i=0; i<menu_items.length; i++){
+		if(menu_active){
+			menu_items[i].className = "dropdown toggled";
+		}else{
+			menu_items[i].className = "dropdown";
+		}
+	}
+	console.log(menu_active);
+}
+</script>
 
 </body>
 </html>

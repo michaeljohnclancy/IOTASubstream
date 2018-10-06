@@ -52,7 +52,7 @@ h1{
 a{
 	text-decoration: none;
 	color: #00D5FF;
-	transition: 0.5s;
+	transition: color 0.5s, background-color 0.5s, text-shadow 0.5s, box-shadow 0.5s, border-radius 0.5s;
 }
 
 a:hover{
@@ -251,14 +251,21 @@ header a:hover{
 	border-radius: 10px;
 }
 
-header h1{
-	position: absolute;
-	position-left: 0px;
-	position-top: 0px;
+header a.title{
+	float: left;
 	font-size: 40px;
+	font-weight: bold;
+	padding: 0px;
+	margin-top: 15px;
+	font-family: RobotoLight;
 }
 
-header div.dropdown{
+header a.title:hover{
+	background-color: transparent;
+	box-shadow: none;
+}
+
+header a.dropdown{
 	display: inline-block;
 	margin: 10px;
 	margin-left: 0px;
@@ -289,12 +296,18 @@ header ul.dropdown{
 	z-index: 10;
 }
 
-header div.dropdown:hover + ul.dropdown, header ul.dropdown:hover{
+header a.dropdown:hover + ul.dropdown, header ul.dropdown:hover, header ul.dropdown.toggled{
 	max-height: 100%;
 }
 
-header div.dropdown:hover{
-	background-color: rgba(190,180,255, 0.5);
+header a.dropdown:hover, header a.dropdown.toggled{
+	background-color: rgba(140,150,220, 0.8);
+	color: #FFFFFF;
+	box-shadow: 0px 20px 40px rgba(0,0,0,0.1);
+}
+
+header a.dropdown.toggled{
+	background-color: rgba(190,180,255, 0.6);
 }
 
 header ul.dropdown li a{
@@ -452,7 +465,7 @@ div.subscription{
 	position: relative;
 }
 
-div.subscription img{
+div.subscription img.banner{
 	float: left;
 	margin-left: 40px;
 	width: 300px;
@@ -473,11 +486,12 @@ div.subscription span{
 	width: 260px;
 }
 
-div.play_btn{
+div.btn{
 	position: absolute;
 	left: 0px;
-	width: 200px;
-	height: 100%;
+	width: 140px;
+	height: 190px;
+	padding: 30px;
 	background-color: rgb(29, 164, 121);
 	border-radius: 35px 0px 0px 35px;
 	box-shadow: inset 0px 3px 10px rgba(0,0,0,0.6);
@@ -485,9 +499,21 @@ div.play_btn{
 	cursor: pointer;
 }
 
-div.play_btn:hover{
+div.btn:hover{
 	background-color: rgb(48, 255, 48);
-	box-shadow: inset 0px 0px 2px rgba(0,0,0,0.8);
+	box-shadow: inset 0px 0px 4px rgba(0,0,0,0.5);
+}
+
+div.pause_btn{
+	background-color: rgb(170, 34, 5);
+}
+
+div.pause_btn:hover{
+	background-color: rgb(228, 49, 36);
+}
+
+div.subscription img.btn_icon{
+	width: 50px;
 }
 
 /* Experimental borders

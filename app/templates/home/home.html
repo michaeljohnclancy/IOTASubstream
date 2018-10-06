@@ -10,9 +10,12 @@
 <div>
 {% for company in companies %}
 <div class="subscription">
-  <div class="play_btn">
+  <div class="btn pause_btn">
+    <img class="btn_icon" src="static/loadIcon.svg"><br>
+    12:13<br>
+    Currently active
   </div>
-  <img src="{{ url_for('static', filename='banners/'+company) }}">
+  <img class="banner" src="{{ url_for('static', filename='banners/'+company) }}">
   <span>500 iota per minute</span>
 </div>
 {% endfor %}

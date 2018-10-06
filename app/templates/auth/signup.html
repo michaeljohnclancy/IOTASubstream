@@ -3,8 +3,9 @@
 {% block title %}Signup{% endblock %}
 
 {% block content %}
-<h1 class="title" >{{ self.title() }}</h1>
+
 <main class="center">
+<h1 class="title" >{{ self.title() }}</h1>
  {{ form.hidden_tag() }}
  {{ wtf.quick_form(form) }}
 </main>
