@@ -6,6 +6,7 @@ import uuid
 from time import sleep, time
 from iota import *
 import os
+import base64
 
 from . import home
 from app.forms import IotaPaymentForm
@@ -29,25 +30,11 @@ def index():
 
 @home.route('/topup', methods=['GET', 'POST'])
 def topupAccount():
-	newAddress = str(current_user.iota_api().get_new_addresses(count=1)['addresses'][0])
+	newAddress = str(current_user.iota_api.get_new_addresses(count=1)['addresses'][0])
+
 	return render_template('/home/topup.html', new_address = newAddress)
 
 
 @home.route('/signup_success', methods=['GET'])
 def signup_success():
 	return render_template('/home/signup_success.html', title="Signup Success")
-
-def random_qr(s):
-    qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
-    qr.add_data(s)
-    qr.make(fit=True)
-    img = qr.make_image()
-    return img
-
-@home.route('/get_qr', methods=['GET'])
-def get_qr():
-    img_buf = cStringIO.StringIO()
-    img = random_qr(request.args.get('s'))
-    img.save(img_buf)
-    img_buf.seek(0)
-    return flask.send_file(img_buf, mimetype='image/png')

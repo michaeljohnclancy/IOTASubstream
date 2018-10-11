@@ -46,8 +46,6 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
 	def authenticate_user(self, authorization_code):
 		return User.query.filter_by(id=authorization_code.user_id)
 
-
-
 class RefreshTokenGrant(grants.RefreshTokenGrant):
 	def authenticate_refresh_token(self, refresh_token):
 		item = Token.query.filter_by(refresh_token=refresh_token).first()

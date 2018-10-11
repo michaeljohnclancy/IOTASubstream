@@ -6,7 +6,7 @@
 <html>
 <head>
 	<title>{% block title %}{% endblock %}</title>
-	<link rel="stylesheet" type="text/css" href="/static/style.css">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 	<meta name="viewport" content="width=device-width, initial-scale=0.6">
 	<meta name="theme-color" content="#5982C0">
 </head>
@@ -19,7 +19,7 @@
 
 		<a href="{{ url_for('home.index') }}">Home</a>
 
-		<a class="dropdown" onclick="toggle_menu();">Balance: {{ sum(current_user.iota_api().get_balances['balances']) }}</a>
+		<a class="dropdown" onclick="toggle_menu();">Balance: {{ current_user.balance }}</a>
 		<ul class="dropdown">
 			<li><a href="{{ url_for('home.topupAccount') }}">Top up</a></li>
 			<li><a href="{{ url_for('member.yourStats') }}">Your stats</a></li>

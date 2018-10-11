@@ -8,7 +8,7 @@ from uuid import uuid4
 from random import SystemRandom
 
 
-from .models import User, Client, db
+from app.models import User, Client, db
 
 class UserForm(FlaskForm):
 	username = StringField('User id:', validators=[DataRequired()])
@@ -71,7 +71,8 @@ class IotaPaymentForm(FlaskForm):
 	target = StringField('Address:', validators=[DataRequired(), Length(min=81, max=81)])
 	si = SelectField(u'si', choices=[('i', 'iota'), ('ki', 'kiota'), ('Mi', 'Miota')], validators=[DataRequired()])
 	submit = SubmitField("Send Payment")
-
+	#Sending payment is not going to be available by sending through a form,
+	#was only for testing. This function is now owned by the PaymentAgreement model.
 	def send_payment(self):
 		_value = self.value.data
 		if form.si.data=='ki':
@@ -98,7 +99,6 @@ class IotaPaymentForm(FlaskForm):
 		db.session.commit()
 
 		return transaction
-
 
 class ClientForm(FlaskForm):
 	client_name = StringField("Client Name", validators=[DataRequired()])

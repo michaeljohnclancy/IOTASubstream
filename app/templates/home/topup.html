@@ -7,7 +7,7 @@
 <main class="center">
 <h1 class="title">{{ self.title() }}</h1>
 Send your IOTA to this address:<br>
-<img style="border-radius: 40px;" src="/get_qr?s={{ new_address }}">
+<img style="background-color:white; padding:40px; border-radius:40px; " src="{{ qrcode(new_address) }}">
 <br>
 <textarea class="mono gap" id="addr" style="width: 380px; height: 70px; overflow:hidden; resize:none; border-radius: 20px; margin-top: 6px;" readonly>{{ new_address }}</textarea>
 </main>

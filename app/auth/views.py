@@ -1,5 +1,7 @@
 from flask import flash, redirect, render_template, url_for, request, jsonify
 from flask_login import login_required, logout_user, current_user
+import pickle
+from iota import Iota
 
 import threading
 
@@ -14,6 +16,7 @@ from . import auth
 from app.forms import LoginForm, UserForm, ConfirmForm, ClientForm
 from app.models import User, Transaction, db, Client, PaymentAgreement
 from app.oauth2 import authorization, query_client
+from app.tasks import get_balance, check_incoming_transactions
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -38,6 +41,10 @@ def login():
 	if loginForm.validate_on_submit():
 		if not loginForm.login():
 			return redirect(url_for('auth.login'))
+		current_user.iota_api = Iota("http://node05.iotatoken.nl:16265",current_user.seed)
+		get_balance.delay(current_user)
+		check_incoming_transactions.delay(current_user)
+		db.session.commit()
 		return redirect(url_for('home.index'))
 
 	return render_template('/auth/login.html', form=loginForm, title='Login')
@@ -45,7 +52,6 @@ def login():
 @auth.route('/logout')
 @login_required
 def logout():
-	
 	logout_user()
 	flash('You have successfully been logged out.')
 
