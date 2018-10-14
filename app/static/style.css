@@ -476,7 +476,7 @@ div.subscription img.banner{
 	border-radius: 0px 35px 0px 0px;
 }
 
-div.subscription span{
+div.subscription span.amount{
 	margin-top: 25px;
 	font-size: 40px;
 	position: absolute;
@@ -492,28 +492,43 @@ div.btn{
 	width: 140px;
 	height: 190px;
 	padding: 30px;
-	background-color: rgb(29, 164, 121);
 	border-radius: 35px 0px 0px 35px;
-	box-shadow: inset 0px 3px 10px rgba(0,0,0,0.6);
 	transition: box-shadow 0.5s, background-color 0.5s;
 	cursor: pointer;
 }
 
-div.btn:hover{
-	background-color: rgb(48, 255, 48);
-	box-shadow: inset 0px 0px 4px rgba(0,0,0,0.5);
+div.play_btn{
+	background-color: rgb(14, 135, 96);
+	box-shadow: 0px 2px 6px rgba(0,0,0,0.5);
+}
+
+div.play_btn:hover{
+	background-color: rgb(17, 152, 108);
+	box-shadow: 0px 0px 4px rgba(0,0,0,0.5);
 }
 
 div.pause_btn{
 	background-color: rgb(170, 34, 5);
+	box-shadow: inset 0px 3px 10px rgba(0,0,0,0.6);
 }
 
 div.pause_btn:hover{
 	background-color: rgb(228, 49, 36);
+	box-shadow: inset 0px 0px 4px rgba(0,0,0,0.5);
 }
 
-div.subscription img.btn_icon{
-	width: 50px;
+@keyframes flicker {
+	from { opacity: 0.9; }
+	to { opacity: 0.6; }
+}
+
+div.btn img.btn_icon{
+	width: 100px;
+	margin: 20px;
+}
+
+div.pause_btn img.btn_icon{
+	animation: flicker 1s ease-in-out alternate infinite;
 }
 
 /* Experimental borders

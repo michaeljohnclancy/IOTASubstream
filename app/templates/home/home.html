@@ -10,13 +10,14 @@
 <div>
 {% for company in companies %}
 <div class="subscription">
-  <div class="btn pause_btn">
-    <img class="btn_icon" src="static/loadIcon.svg"><br>
-    12:13<br>
+  <div class="btn pause_btn" onclick="toggle_button(this);">
+    <img class="btn_icon" src="static/pauseIcon.svg"><br>
+    <input type="hidden" class="start_time" id="start_time_{{ loop.index-1 }}" value="2018/10/06 17:30">
+    <span class="time">...</span><br>
     Currently active
   </div>
   <img class="banner" src="{{ url_for('static', filename='banners/'+company) }}">
-  <span>500 iota per minute</span>
+  <span class="amount">500 iota per minute</span>
 </div>
 {% endfor %}
 </div>
@@ -29,5 +30,37 @@
 <img src="{{ url_for('static', filename='banners/'+company) }}">
 {% endfor %}
 </main>
+
+<script type="text/javascript">
+
+var timers = document.getElementsByClassName("time")
+
+var update_timers = setInterval(function (){
+  for(i=0; i<timers.length; i++){
+    var inp = document.getElementById("start_time_"+i);
+    var start_date = new Date(inp.value).getTime();
+    var now = new Date().getTime();
+    var time_active = now - start_date;
+
+    var hours = Math.floor((time_active % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((time_active % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((time_active % (1000 * 60)) / 1000);
+
+    timers[i].innerHTML = hours + ":" + ("0" + minutes).slice(-2) + ":" + ("0" + seconds).slice(-2);
+  }
+},1000);
+
+function toggle_button(btn){
+  icon = btn.getElementsByClassName("btn_icon")[0]
+  if(btn.className == "btn pause_btn"){
+    btn.className = "btn play_btn"
+    icon.src = "/static/playIcon.svg"
+  }else{
+    btn.className = "btn pause_btn"
+    icon.src = "/static/pauseIcon.svg"
+  }
+}
+
+</script>
 
 {% endblock %}
