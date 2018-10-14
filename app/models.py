@@ -47,10 +47,10 @@ class User(UserMixin, db.Model):
 	active_agreements = db.relationship('PaymentAgreement', backref='user', lazy=True)
 	transactions = db.relationship('Transaction', backref='user', lazy=True)
 
-	iota_api = Iota("http://node05.iotatoken.nl:16265")
+	iota_api =  Iota("https://wallet1.iota.town:443")
 
-	def __init__(self):
-		self.iota_api = Iota("http://node05.iotatoken.nl:16265",self.seed)
+	def iota_api(self):
+		return Iota("https://wallet1.iota.town:443", self.seed)
 
 	def get_user_id(self):
 		if self.id:

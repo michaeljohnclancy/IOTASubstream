@@ -61,12 +61,13 @@ def query_client(client_id):
 def save_token(token, request):
 	authCode = AuthorizationCode.query.filter_by(
 			code=request.code, client_id=request.client_id).first()
+	if authCode and not authCode.is_expired():
+		item = Token(
+			client_id = request.client_id,
+			user_id = authCode.user_id,
+			**token
+		)
 
-	item = Token(
-		client_id = request.client_id,
-		user_id = authCode.user_id,
-		**token
-	)
 	db.session.add(item)
 	db.session.commit()
 

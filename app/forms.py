@@ -7,7 +7,6 @@ from werkzeug.security import gen_salt
 from uuid import uuid4
 from random import SystemRandom
 
-
 from app.models import User, Client, db
 
 class UserForm(FlaskForm):

@@ -7,14 +7,12 @@ from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from flask_qrcode import QRcode
 
-from celery import Celery
 
 from authlib.specs.rfc6749 import grants
 
 # local imports
 from config import app_config, ProductionConfig
- 
-celery = Celery(__name__, broker='pyamqp://guest@localhost//', include=['app.tasks'])
+
 
 def create_app(config_name=None):
 	app = Flask(__name__, instance_relative_config=True)
@@ -31,26 +29,22 @@ def create_app(config_name=None):
 		require_oauth, authorization
 		)
 
-	def make_celery(app):
-			celery.conf.update(app.config)
-			TaskBase = celery.Task
-			class ContextTask(TaskBase):
-				abstract = True
-				def __call__(self, *args, **kwargs):
-					with app.app_context():
-						return TaskBase.__call__(self, *args, **kwargs)
-			celery.Task = ContextTask
-
 	with app.app_context():
 		db.init_app(app)
 		authorization.init_app(app, query_client, save_token)
 		login_manager.init_app(app)
-		global celery
-		make_celery(app)
 
-		
-
-
+	from tasks import celery as my_celery
+   
+	#celery init
+	my_celery.conf.update(app.config)
+	TaskBase = my_celery.Task
+	class ContextTask(TaskBase):
+		abstract = True
+		def __call__(self, *args, **kwargs):
+			with app.app_context():
+				my_celery.Task = TaskBase.__call__(self, *args, **kwargs)
+	my_celery.Task = ContextTask	
 
 	Bootstrap(app)
 	QRcode(app)

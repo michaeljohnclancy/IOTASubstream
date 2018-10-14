@@ -1,3 +1,4 @@
+from __future__ import absolute_import, unicode_literals
 from flask import flash, redirect, render_template, url_for, request, jsonify
 from flask_login import login_required, logout_user, current_user
 import pickle
@@ -42,9 +43,10 @@ def login():
 		if not loginForm.login():
 			return redirect(url_for('auth.login'))
 		current_user.iota_api = Iota("http://node05.iotatoken.nl:16265",current_user.seed)
-		get_balance.delay(current_user)
-		check_incoming_transactions.delay(current_user)
-		db.session.commit()
+		
+		#Celery tasks
+		get_balance.apply_async((current_user.id,))
+		check_incoming_transactions.apply_async((current_user.id,))
 		return redirect(url_for('home.index'))
 
 	return render_template('/auth/login.html', form=loginForm, title='Login')

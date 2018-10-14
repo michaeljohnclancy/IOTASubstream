@@ -30,7 +30,7 @@ def index():
 
 @home.route('/topup', methods=['GET', 'POST'])
 def topupAccount():
-	newAddress = str(current_user.iota_api.get_new_addresses(count=1)['addresses'][0])
+	newAddress = str(current_user.iota_api().get_new_addresses(count=1)['addresses'][0].with_valid_checksum())
 
 	return render_template('/home/topup.html', new_address = newAddress)
 
