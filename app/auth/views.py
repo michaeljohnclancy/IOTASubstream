@@ -14,8 +14,10 @@ import json
 
 #Local
 from . import auth
+
+from extensions import db
 from app.forms import LoginForm, UserForm, ConfirmForm, ClientForm
-from app.models import User, Transaction, db, Client, PaymentAgreement
+from app.models import User, Transaction, Client, PaymentAgreement
 from app.oauth2 import authorization, query_client
 from app.tasks import get_balance, check_incoming_transactions
 
@@ -42,8 +44,6 @@ def login():
 	if loginForm.validate_on_submit():
 		if not loginForm.login():
 			return redirect(url_for('auth.login'))
-		current_user.iota_api = Iota("http://node05.iotatoken.nl:16265",current_user.seed)
-		
 		#Celery tasks
 		get_balance.apply_async((current_user.id,))
 		check_incoming_transactions.apply_async((current_user.id,))

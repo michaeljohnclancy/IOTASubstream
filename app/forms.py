@@ -7,7 +7,8 @@ from werkzeug.security import gen_salt
 from uuid import uuid4
 from random import SystemRandom
 
-from app.models import User, Client, db
+from extensions import db
+from app.models import User, Client
 
 class UserForm(FlaskForm):
 	username = StringField('User id:', validators=[DataRequired()])

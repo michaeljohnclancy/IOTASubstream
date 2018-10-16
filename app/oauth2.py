@@ -1,4 +1,3 @@
-from app.models import db, User, AuthorizationCode, Token, Client
 from werkzeug.security import gen_salt
 from flask_login import current_user
 
@@ -11,6 +10,9 @@ from authlib.flask.oauth2.sqla import (
 	create_bearer_token_validator,
 	create_save_token_func
 )
+
+from extensions import db
+from app.models import User, AuthorizationCode, Token, Client
 
 #Definitions
 authorization = AuthorizationServer()

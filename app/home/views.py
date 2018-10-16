@@ -9,8 +9,10 @@ import os
 import base64
 
 from . import home
+
+from extensions import db
 from app.forms import IotaPaymentForm
-from app.models import Transaction, db
+from app.models import Transaction
 
 import qrcode
 import cStringIO
@@ -30,7 +32,7 @@ def index():
 
 @home.route('/topup', methods=['GET', 'POST'])
 def topupAccount():
-	newAddress = str(current_user.iota_api().get_new_addresses(count=1)['addresses'][0].with_valid_checksum())
+	newAddress = str(current_user.iota_api.get_new_addresses(count=1)['addresses'][0].with_valid_checksum())
 
 	return render_template('/home/topup.html', new_address = newAddress)
 

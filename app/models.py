@@ -2,9 +2,6 @@ from flask_login import UserMixin, current_user
 from flask_wtf import FlaskForm
 import pickle
 
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-
 from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, Length
 from passlib.context import CryptContext
@@ -13,12 +10,10 @@ from authlib.flask.oauth2.sqla import (
 	OAuth2AuthorizationCodeMixin,
 	OAuth2TokenMixin,
 )
-from celery import Celery
 
 from iota import Iota
 
-db = SQLAlchemy()
-login_manager = LoginManager()
+from extensions import db, login_manager
 
 
 pwd_context = CryptContext(
@@ -47,8 +42,7 @@ class User(UserMixin, db.Model):
 	active_agreements = db.relationship('PaymentAgreement', backref='user', lazy=True)
 	transactions = db.relationship('Transaction', backref='user', lazy=True)
 
-	iota_api =  Iota("https://wallet1.iota.town:443")
-
+	@property
 	def iota_api(self):
 		return Iota("https://wallet1.iota.town:443", self.seed)
 
@@ -144,7 +138,7 @@ class PaymentAgreement(db.Model):
 				tag=None,
 				message=TryteString.from_string(self.user.identifier))
 
-		self.user.iota_api.send_transfer(depth=10, transfers=[tx])
+		self.user.iota_api().send_transfer(depth=10, transfers=[tx])
 
 		transaction = Transaction(transaction_id=str(uuid.uuid4()),
 			identifier=self.user.identifier,
@@ -156,14 +150,6 @@ class PaymentAgreement(db.Model):
 		db.session.commit()
 
 		return transaction
-
-	def execute_agreement(self):
-		#TODO what to return if session is invalid on payment?
-		if self.is_valid_session():
-			transaction = self.send_payment()
-			execute_agreement.delay((), countdown=self.payment_time+1)
-		else:
-			return False
 
 	def start_agreement(self):
 		if not self.is_active:
