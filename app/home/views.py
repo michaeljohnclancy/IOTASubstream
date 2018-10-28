@@ -11,7 +11,6 @@ import base64
 from . import home
 
 from extensions import db
-from app.forms import IotaPaymentForm
 from app.models import Transaction
 
 import qrcode
@@ -19,15 +18,9 @@ import cStringIO
 
 @home.route('/', methods=['GET', 'POST'])
 def index():
-	form = IotaPaymentForm()
-
-	if form.validate_on_submit():
-		form.send_payment()
-		return redirect(url_for('member.yourStats'))
-
 	companies = os.listdir("app/static/banners")
 
-	return render_template('/home/home.html', form=form, companies=companies)
+	return render_template('/home/home.html', companies=companies)
 
 
 @home.route('/topup', methods=['GET', 'POST'])

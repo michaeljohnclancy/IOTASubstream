@@ -73,32 +73,6 @@ class IotaPaymentForm(FlaskForm):
 	submit = SubmitField("Send Payment")
 	#Sending payment is not going to be available by sending through a form,
 	#was only for testing. This function is now owned by the PaymentAgreement model.
-	def send_payment(self):
-		_value = self.value.data
-		if form.si.data=='ki':
-			_value *= 1e3
-		elif form.si.data=='Mi':
-			_value *= 1e6
-
-		tx = ProposedTransaction(address=Address(str(self.target.data)),
-			value=int(_value),
-			tag=None,
-			message=TryteString.from_string(self.identifier.data))
-		
-		#TODO Need to add error handling
-		user = User.query.filter_by(identifier=self.identifier.data)
-		user.iota_api.send_transfer(depth=10, transfers=[tx])
-
-		transaction = Transaction(transaction_id=str(uuid.uuid4()),
-			identifier=self.identifier.data,
-			value=_value,
-			target=self.target.data,
-			timestamp=tx.timestamp)
-
-		db.session.add(transaction)
-		db.session.commit()
-
-		return transaction
 
 class ClientForm(FlaskForm):
 	client_name = StringField("Client Name", validators=[DataRequired()])

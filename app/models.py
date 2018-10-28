@@ -44,7 +44,17 @@ class User(UserMixin, db.Model):
 
 	@property
 	def iota_api(self):
-		return Iota("https://wallet1.iota.town:443", self.seed)
+		return Iota("http://192.168.0.12:14600", self.seed)
+
+	def iota_account_data(self, n=0):
+		return self.iota_api.get_account_data(n)
+
+	def get_balance(self):
+		return self.iota_account_data()['balance']
+
+	def get_bundles(self, n=0):
+		return self.iota_account_data()['bundles']
+	
 
 	def get_user_id(self):
 		if self.id:
@@ -109,7 +119,7 @@ class PaymentAgreement(db.Model):
 	user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
 	client_id = db.Column(db.String(128), db.ForeignKey('oauth2_client.client_id'))
 
-	is_active = db.Column(db.Boolean(), default=1)
+	is_active = db.Column(db.Boolean(), default=0)
 
 	transactions = db.relationship('Transaction', backref='payment_agreement', lazy=True)
 
@@ -133,27 +143,30 @@ class PaymentAgreement(db.Model):
 			return True
 
 	def send_payment(self):
-		tx = ProposedTransaction(address=Address(str(self.payment_address)),
-				value=int(self.payment_amount),
-				tag=None,
-				message=TryteString.from_string(self.user.identifier))
+		#Sends payment based off of payment agreement. Returns Boolean depending on success.
+		if self.is_valid_session():
+			tx = ProposedTransaction(address=Address(str(self.payment_address)),
+					value=int(self.payment_amount),
+					tag=None,
+					message=TryteString.from_string(self.user.identifier))
 
-		self.user.iota_api().send_transfer(depth=10, transfers=[tx])
+			self.user.iota_api().send_transfer(depth=10, transfers=[tx])
 
-		transaction = Transaction(transaction_id=str(uuid.uuid4()),
-			identifier=self.user.identifier,
-			payment_amount=self.payment_amount,
-			payment_address=self.payment_address,
-			timestamp=tx.timestamp)
+			transaction = Transaction(transaction_id=str(uuid.uuid4()),
+				identifier=self.user.identifier,
+				payment_amount=self.payment_amount,
+				payment_address=self.payment_address,
+				timestamp=tx.timestamp)
 
-		db.session.add(transaction)
-		db.session.commit()
+			db.session.add(transaction)
+			db.session.commit()
+			return True
+			
+		else:
+			return False
 
-		return transaction
 
 	def start_agreement(self):
-		if not self.is_active:
-			self.is_active = 1
 		execute_agreement.delay()
 
 	def stop_agreement():

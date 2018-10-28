@@ -19,7 +19,7 @@ from extensions import db
 from app.forms import LoginForm, UserForm, ConfirmForm, ClientForm
 from app.models import User, Transaction, Client, PaymentAgreement
 from app.oauth2 import authorization, query_client
-from app.tasks import get_balance, check_incoming_transactions
+from app.tasks import update_balance
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -45,8 +45,7 @@ def login():
 		if not loginForm.login():
 			return redirect(url_for('auth.login'))
 		#Celery tasks
-		get_balance.apply_async((current_user.id,))
-		check_incoming_transactions.apply_async((current_user.id,))
+		update_balance.apply_async((current_user.id,))
 		return redirect(url_for('home.index'))
 
 	return render_template('/auth/login.html', form=loginForm, title='Login')
@@ -105,7 +104,6 @@ def authorize():
 						user_id=grant_user.id,
 						client_id=request.args['client_id']
 						)
-
 
 					db.session.add(payment_agreement)
 				except:
