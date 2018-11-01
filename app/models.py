@@ -2,6 +2,7 @@ from flask_login import UserMixin, current_user
 from flask_wtf import FlaskForm
 import pickle
 
+from sqlalchemy.schema import UniqueConstraint
 from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, Length
 from passlib.context import CryptContext
@@ -24,8 +25,11 @@ pwd_context = CryptContext(
 
 # Set up setters and getters
 @login_manager.user_loader
-def load_user(id):
-	return User.query.get(str(id))
+def user_loader(user_id):
+	user = User.query.filter_by(id=user_id).first()
+	if user:
+		return user
+	return None
 
 class User(UserMixin, db.Model):
 
@@ -54,7 +58,6 @@ class User(UserMixin, db.Model):
 
 	def get_bundles(self, n=0):
 		return self.iota_account_data()['bundles']
-	
 
 	def get_user_id(self):
 		if self.id:
@@ -111,6 +114,7 @@ class PaymentAgreement(db.Model):
 	#Starting payments needs to check if the token between the users is active
 
 	__tablename__ = "payment_agreement"
+	__table_args__ = tuple(UniqueConstraint('user_id', 'client_id'),)
 
 	id = db.Column(db.Integer(), primary_key=True)
 	payment_address = db.Column(db.String(128))
@@ -122,6 +126,8 @@ class PaymentAgreement(db.Model):
 	is_active = db.Column(db.Boolean(), default=0)
 
 	transactions = db.relationship('Transaction', backref='payment_agreement', lazy=True)
+	token = db.relationship('Token', backref='payment_agreement', lazy=True, uselist=False)
+
 
 	def set_address(self, new_address):
 		self.payment_address = new_address
@@ -132,15 +138,25 @@ class PaymentAgreement(db.Model):
 		#active OAuth Session
 		#sufficient balance in account
 		#if payment is paused
-		
-		token = Token.query.filter_by(user_id=self.user_id, client_id=self.client_id).first()
 
 		remaining_balance = self.user.get_balance() - self.payment_amount
+		print(remaining_balance)
+		print(bool(not self.token))
+		print(self.token.revoked)
+		print(not self.is_active)
 
-		if (not token) or token.is_revoked or (remaining_balance < 0) or (not self.is_active):
+		if (not self.token) or self.token.revoked or (remaining_balance < 0) or (not self.is_active):
 			return False
 		else:
 			return True
+
+	def info(self):
+		return dict(
+			username=self.user.username,
+			payment_address=self.payment_address,
+			payment_amount=self.payment_amount,
+			payment_time=self.payment_time
+			)
 
 	def send_payment(self):
 		#Sends payment based off of payment agreement. Returns Boolean depending on success.
@@ -150,7 +166,11 @@ class PaymentAgreement(db.Model):
 					tag=None,
 					message=TryteString.from_string(self.user.identifier))
 
-			self.user.iota_api().send_transfer(depth=10, transfers=[tx])
+			try:
+				self.user.iota_api().send_transfer(depth=10, transfers=[tx])
+			except:
+				print("Transfer Unsuccessful")
+				return None
 
 			transaction = Transaction(transaction_id=str(uuid.uuid4()),
 				identifier=self.user.identifier,
@@ -160,10 +180,11 @@ class PaymentAgreement(db.Model):
 
 			db.session.add(transaction)
 			db.session.commit()
-			return True
-			
+			return transaction
+
 		else:
-			return False
+			print("Session Invalid")
+			return None
 
 
 	def start_agreement(self):
@@ -179,30 +200,29 @@ class Client(db.Model, OAuth2ClientMixin):
 	user_id = db.Column(
 		db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE')
 	)
-	
-	user = db.relationship('User')
+	payment_agreements = db.relationship('PaymentAgreement', backref='client', lazy='dynamic')
 
 class AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
 	__tablename__ = 'oauth2_code'
 
 	id = db.Column(db.Integer(), primary_key=True)
+	client_id = db.Column(
+		db.String(128), db.ForeignKey('oauth2_client.client_id', ondelete='CASCADE'))
 	user_id = db.Column(
 		db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
 	
-	user = db.relationship('User')
 
 class Token(db.Model, OAuth2TokenMixin):
 	__tablename__ = 'oauth2_token'
+	__table_args__ = tuple(UniqueConstraint('user_id', 'client_id'),)
 
 	id = db.Column(db.Integer(), primary_key=True)
 	user_id = db.Column(
 		db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
 	client_id = db.Column(
-		db.Integer(), db.ForeignKey('oauth2_client.id', ondelete='CASCADE'))
-
-	user = db.relationship('User')
-
-
+		db.String(128), db.ForeignKey('oauth2_client.client_id', ondelete='CASCADE'))
+	payment_agreement_id = db.Column(
+		db.Integer(), db.ForeignKey('payment_agreement.id', ondelete='CASCADE'))
 	def is_refresh_token_expired(self):
 		expires_at = self.issued_at + self.expires_in * 2
 		return expires_at < time.time()

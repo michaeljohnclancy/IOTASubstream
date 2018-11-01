@@ -7,7 +7,7 @@ from celery import shared_task
 from pytz import timezone
 from datetime import datetime, timedelta
 
-from app.models import User, Transaction
+from app.models import User, Transaction, PaymentAgreement
 
 from extensions import db
 
@@ -69,16 +69,17 @@ def check_incoming_transactions(user_id, n=0):
 @shared_task()
 def execute_agreement(user_id, client_id):
 
-	payment_agreement = PaymentAgreement.query.filter_by(user_id=user_id, client_id=client_id)
-	if not payment_agreement.is_active:
-		payment_agreement.is_active = 1
-		db.session.commit()
+	payment_agreement = PaymentAgreement.query.filter_by(user_id=user_id, client_id=client_id).first()
 
-	if payment_agreement.send_payment():
+	transaction = payment_agreement.send_payment()
+
+	if type(transaction) is Transaction:
 		return execute_agreement.apply_async((user_id, client_id), eta=timezone.localize(datetime.now()) + timedelta(seconds=payment_agreement.payment_time))
 	else:
+		print("Transaction was not successful.")
 		payment_agreement.is_active = 0
 		db.session.commit()
+		return False
 
 
 

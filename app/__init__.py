@@ -51,6 +51,6 @@ def create_app(config_name=None):
 	app.register_blueprint(member_blueprint)
 
 	from .payments import payments as payments_blueprint
-	app.register_blueprint(member_blueprint)
+	app.register_blueprint(payments_blueprint)
 
 	return app

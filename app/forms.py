@@ -109,7 +109,7 @@ class ClientForm(FlaskForm):
 			grant_type = self.grant_type.data,
 			response_type = self.response_type.data,
 			scope = self.scope.data,
-			user = user
+			user_id = user.id
 		)
 		db.session.add(client)
 		db.session.commit()

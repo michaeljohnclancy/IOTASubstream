@@ -8,11 +8,12 @@ from authlib.flask.oauth2 import AuthorizationServer, ResourceProtector
 from authlib.flask.oauth2.sqla import (
 	create_revocation_endpoint,
 	create_bearer_token_validator,
+	create_query_client_func,
 	create_save_token_func
 )
 
 from extensions import db
-from app.models import User, AuthorizationCode, Token, Client
+from app.models import User, AuthorizationCode, Token, Client, PaymentAgreement
 
 #Definitions
 authorization = AuthorizationServer()
@@ -21,13 +22,15 @@ require_oauth = ResourceProtector()
 class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
 	def create_authorization_code(self, client, grant_user, request):
 		# you can use other method to generate this code
+		print(client.client_id)
+		print(grant_user.id)
 		code = generate_token(48)
 		item = AuthorizationCode(
 			code=code,
 			client_id=client.client_id,
 			redirect_uri=request.redirect_uri,
-			scope=request.scope,
-			user_id=grant_user.get_user_id(),
+			scope=client.scope,
+			user_id=grant_user.id,
 			)
 		db.session.add(item)
 		db.session.commit()
@@ -46,7 +49,7 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
 		db.session.commit()
 
 	def authenticate_user(self, authorization_code):
-		return User.query.filter_by(id=authorization_code.user_id)
+		return User.query.filter_by(id=authorization_code.user_id).first()
 
 class RefreshTokenGrant(grants.RefreshTokenGrant):
 	def authenticate_refresh_token(self, refresh_token):
@@ -55,23 +58,29 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
 			return item
 
 	def authenticate_user(self, credential):
-		return User.query.filter_by(id=credential.user_id)
+		return User.query.filter_by(id=credential.user_id).first()
 
-def query_client(client_id):
-	return Client.query.filter_by(client_id=client_id).first()
+query_client = create_query_client_func(db.session, Client)
+
+#def query_client(client_id):
+#	return Client.query.filter_by(client_id=client_id).first()
 
 def save_token(token, request):
 	authCode = AuthorizationCode.query.filter_by(
-			code=request.code, client_id=request.client_id).first()
-	if authCode and not authCode.is_expired():
-		item = Token(
-			client_id = request.client_id,
-			user_id = authCode.user_id,
-			**token
-		)
+			code=request.code, client_id=request.client.client_id).first()
 
-	db.session.add(item)
-	db.session.commit()
+	print(authCode)
+	if authCode and not authCode.is_expired():
+		payment_agreement = PaymentAgreement.query.filter_by(user_id=authCode.user_id, client_id=authCode.client_id).first()
+		item = Token(
+			client_id = authCode.client_id,
+			user_id = authCode.user_id,
+			payment_agreement_id=payment_agreement.id,
+			**token
+
+		)
+		db.session.add(item)
+		db.session.commit()
 
 #Registering grants
 authorization.register_grant(AuthorizationCodeGrant)

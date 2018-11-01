@@ -81,59 +81,44 @@ def authorize():
 	#and is valid until the Token is destroyed. (TODO destroy agreement on token deletion.)
 
 	#Alternatively, a website may request payment preauthorization here.
-
+	grant_user = current_user
 
 	if current_user.is_authenticated:
 		form = ConfirmForm()
-	else:
-		form = LoginForm()
-
-
-	if form.validate_on_submit():
-		if current_user.is_authenticated:
-			if form.confirm.data:
-
-				grant_user = current_user
-
-				try:	
-					#Need to sanitize the request.args inputs before putting in DB
-					payment_agreement = PaymentAgreement(
-						payment_address=request.args['payment_address'],
-						payment_amount=request.args['payment_amount'],
-						payment_time=request.args['payment_time'],
-						user_id=grant_user.id,
-						client_id=request.args['client_id']
-						)
-
-					db.session.add(payment_agreement)
-				except:
-					#Need to add errors
-					print("Error adding new payment agreement")
-
-			else:
-				grant_user = None
-		else:
-			form.login()
-			if current_user.is_authenticated:
-				grant_user = current_user
-
+		if form.validate_on_submit():
+			if form.confirm.data:	
 				payment_agreement = PaymentAgreement(
 					payment_address=request.args['payment_address'],
 					payment_amount=request.args['payment_amount'],
 					payment_time=request.args['payment_time'],
-					user_id=grant_user.id,
+					user_id=current_user.id,
 					client_id=request.args['client_id']
-					)
+				)
 
 				db.session.add(payment_agreement)
-			else:
-				grant_user = None
+				db.session.commit()
+				return authorization.create_authorization_response(grant_user=grant_user)
+	else:
+		form = LoginForm()
+		if form.validate_on_submit():
+			if not form.login():
+				flash("Could not authenticate, please try again, or create an account if you haven't done so.")
+				return redirect(url_for('auth.login'))
 
-		db.session.commit()
-		return authorization.create_authorization_response(grant_user=grant_user)
+			payment_agreement = PaymentAgreement(
+				payment_address=request.args['payment_address'],
+				payment_amount=request.args['payment_amount'],
+				payment_time=request.args['payment_time'],
+				user_id=current_user.id,
+				client_id=request.args['client_id']
+			)
+
+			db.session.add(payment_agreement)
+			db.session.commit()
+			return authorization.create_authorization_response(grant_user=grant_user)
 	
 	try:
-		grant = authorization.validate_consent_request(end_user=current_user)
+		grant = authorization.validate_consent_request(end_user=grant_user)
 	except OAuth2Error as error:
 		# TODO: add an error page
 		payload = dict(error.get_body())
@@ -149,7 +134,6 @@ def authorize():
 		payment_address=request.args['payment_address'],
 		payment_time=request.args['payment_time']
 	)
-
 
 @auth.route('/auth/create_client', methods=('GET', 'POST'))
 @login_required
