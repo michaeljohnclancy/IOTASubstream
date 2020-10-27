@@ -14,7 +14,7 @@ click==6.7
 colorama==0.3.9
 commentjson==0.7.1
 CouchDB==1.2
-cryptography==2.2.2
+cryptography==3.2
 dnspython==1.15.0
 dominate==2.3.1
 enum34==1.1.6
