@@ -88,7 +88,7 @@ stevedore==1.28.0
 tox==3.0.0
 typing==3.6.4
 unicorn==1.0.1
-urllib3==1.22
+urllib3==1.26.5
 vine==1.1.4
 virtualenv==16.0.0
 virtualenv-clone==0.3.0
