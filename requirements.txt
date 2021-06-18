@@ -29,7 +29,7 @@ Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
 hashpumpy==1.2
 idna==2.6
-impacket==0.9.18.dev0
+impacket==0.9.23
 intervaltree==2.1.0
 ipaddress==1.0.22
 itsdangerous==0.24
