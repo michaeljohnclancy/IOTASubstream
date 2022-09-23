@@ -48,7 +48,7 @@ passlib==1.7.1
 pbr==4.0.4
 pluggy==0.6.0
 ply==3.11
-protobuf==3.5.1
+protobuf==3.18.3
 psutil==5.4.5
 pwntools==3.12.0
 py==1.5.3
